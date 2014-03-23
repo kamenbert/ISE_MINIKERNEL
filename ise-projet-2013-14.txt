@@ -1,0 +1,75 @@
+Présentation des projets
+
+A) Livrables
+
+A.1) Rapport préliminaire (Coef 1)
+  Format PDF via le dépôt de projet (au plus tard le 03/04).
+  Format papier à présenter le jour de la soutenance (08/04).
+  Il faut faire le I, II, IV du plan et laisser le III vide
+  Pendant la soutenance, correction du rapport devant nous.
+
+A.2) Rapport final (Coef 2)
+  Format PDF via le dépôt de projet (au plus tard le 01/05).
+  Format papier à présenter le jour de la soutenance (22/04).
+  Il faut rendre le rapport complet: ajout du III et prise en
+  compte des remarques pour les I, II et IV.
+  Pendant la soutenance, validation du III.
+
+A.3) Soutenance (Coef 3)
+  Démonstration du projet sur une machine de l'école
+  le 26/05 (bonus) ou le 28/05.
+
+B) Sujets
+
+Les projets doivent tourner sur les machines de l'école.
+On peut cependant modifier le noyau de la machine si on le souhaite.
+Le noyau 2.6.30 ainsi que les .config des machines de l'école
+se trouvent dans /pub/ia.
+
+Sujet 1: minikernel
+  A partir minikernel (http://lunix120.ensiie.fr/ise/minikernel-2013-14.tgz)
+  qui génère une disquette bootable avec un système 32 bits en mode protégé.
+  Ce système est minimal, il ne fait qu'afficher le nombre de coup d'horlog
+  reçu depuis son démarrage.
+  Il s'agit de le compléter par étapes:
+    I)   mettre en place l'interruption clavier.
+    II)  mettre en place 4 threads
+    III) mettre en place 4 threads + appel system (read write sleep) + libc
+    (printf scanf read write sleep) + un systeme de focus pour read.
+    IV)  mettre en place 4 processus, les codes des processus étant compilés
+         séparément et en dehors du noyau et concaténés au noyau sur la disquette.
+    V)   mettre une place les protections memoire.
+
+Sujet 2: Sémaphore
+  Mettre en place un système de sémaphores (P() V()) pour gérer des sections
+  critiques. La durée de vie de ces sémaphores est similaire à ceux des pipes:
+  Ils disparaissent dès que le processus qui les a créés et ses fils meurent.
+
+C) Rapport
+
+Le rapport ne doit pas être personnel. Il est conseillé de trouver
+un nom au projet afin de pouvoir le nommer tout au long du rapport.
+Le texte doit être publiable sur Internet pour décrire le projet.
+
+Plan indicatif:
+I) Introduction (1/2 à 1 page) :
+    on doit savoir lors d'un problème rencontré si le projet peut
+    résoudre notre problème ou non. C'est donc une présentation
+    très rapide mettant en avant les points forts.
+
+II) Manuel utilisateur :
+    Suivant le sujet, cette partie s'y prête plus ou moins bien.
+    Elle doit expliquer comment utiliser le projet.
+    Elle est donc sous forme de pages de man avec un ou des exemples.
+
+III) Implantation (4 pages max.) :
+    On explique comment on a fait le projet.
+    On ne veut pas les détails de très bas niveau,
+    mais plutôt une explication haut niveau.
+
+IV) Recette (1-2 pages) :
+    Il faut décrire la démonstration que l'on va faire
+    lors de la soutenance finale
+    On doit expliquer les commandes/le code et donner
+    les résultats escomptés.
+
