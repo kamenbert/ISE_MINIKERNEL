@@ -1,1 +1,23 @@
-test
+####################################################
+####						#### 
+####						#### 
+####	   Projet Système d'exploitation	####				 
+####						#### 
+####						#### 
+####################################################
+
+
+
+Sujet 1: minikernel
+  A partir minikernel (./minikernel-2013-14/)
+  qui génère une disquette bootable avec un système 32 bits en mode protégé.
+  Ce système est minimal, il ne fait qu'afficher le nombre de coup d'horlog
+  reçu depuis son démarrage.
+  Il s'agit de le compléter par étapes:
+    I)   mettre en place l'interruption clavier.
+    II)  mettre en place 4 threads
+    III) mettre en place 4 threads + appel system (read write sleep) + libc
+    (printf scanf read write sleep) + un systeme de focus pour read.
+    IV)  mettre en place 4 processus, les codes des processus étant compilés
+         séparément et en dehors du noyau et concaténés au noyau sur la disquette.
+    V)   mettre une place les protections memoire.
