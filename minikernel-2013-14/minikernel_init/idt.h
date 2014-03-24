@@ -790,8 +790,8 @@ ignore_int:
 	pushl %es
 	pushl %ds
 	movl  $(__KERNEL_DS),%ecx
-	movl  %cx,%ds
-	movl  %cx,%es
+	movl  %ecx,%ds
+	movl  %ecx,%es
 	pushl %eax
 	pushl %eax
 	pushl $ignore_int_mess
