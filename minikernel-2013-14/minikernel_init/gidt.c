@@ -1,5 +1,11 @@
 #include <stdio.h>
 
+/**
+ * Génere la table des interruptions idt.h 
+ * contenant les numéros et les routines 
+ * d'interruption
+ **/
+
 void print_ignore_int_code();
 void print_correct_idt();
 

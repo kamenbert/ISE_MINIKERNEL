@@ -26,6 +26,11 @@ char rtc_A, rtc_B, rtc_C;
 int i;
 
 	/* init irq0 entry 0x20 (timer) */
+	/** Initialise l'interruption 0 (celle du timer) 
+	 * pour qu'elle execute la minikernel_irq0 (present
+	 * dans head.S. minikernel_irq0 sauvegarde l'état et
+	 * appelle la fonction do_minikernel_irq0 ci-dessous.
+	 * */ 
 	{
 		extern unsigned long idt_table[];
 		long addr=(long)minikernel_irq0;
