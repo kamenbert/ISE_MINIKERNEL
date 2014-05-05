@@ -52,9 +52,10 @@ startup_32:
 	call vga_init
 	call ttyS_init
 	call main_init
+	call kbd_init
 	movb $0xFF,%al
 	outb %al,$0xa1		/* enable IRQ: -8,-9,-10,-11,-12,-13,-14,-15 */
-	movb $0xFA,%al
+	movb $0xF8,%al
 	outb %al,$0x21		/* enable IRQ: +00,-01,+02,-03,-04,-05,-06,-07  */
 	sti
 	call mini_kernel
@@ -94,4 +95,3 @@ minikernel_irq0:
 	popl %ecx
 	popl %eax
 	iret
-	
