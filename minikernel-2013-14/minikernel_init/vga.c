@@ -67,11 +67,11 @@ subscreen sc_tty_user[4];
 subscreen sc_tty_info[4];
 
 
-void printborder (subscreen* psc){
+void printborder (subscreen* psc,char c){
 	int nby = psc->nblines;
 	int nbx = psc->nbcols;
 	int i;
-	char c = 3*'&';
+	c *= 16;
 	char* border = psc->vidmem - (nbcols + 1)*2;
 	for(i=0;i<nbx+2;i++){
 		border[1+2*i]=c;
@@ -160,7 +160,7 @@ int i;
 		sc_tty_info[j].cline=0;
 		sc_tty_info[j].ccol=0;
 
-		printborder(&sc_tty_info[j]);
+		printborder(&sc_tty_info[j],7);
 
 		int decalage_user=0;
 		decalage_user+= nbcols * sc_tty_info[j].nblines;
@@ -173,7 +173,7 @@ int i;
 		sc_tty_user[j].cline=0;
 		sc_tty_user[j].ccol=0;
 
-		printborder(&sc_tty_user[j]);
+		printborder(&sc_tty_user[j],7);
 	}
 }
 

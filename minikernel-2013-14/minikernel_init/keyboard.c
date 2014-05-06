@@ -48,8 +48,8 @@ void kbd_output(int scancode)
 	kprintc(&(sc_tty_user[3]),'d');
 	*/
 	
-	kprintf(&(sc_tty_user[0]), "\n Scancode : %04x ET masque_state : %04x = state : %04x ", scancode,masque_state, state );
+	kprintf(&(sc_tty_user[0]), "\nScancode : %04x ET masque_state : %04x = state : %04x ", scancode,masque_state, state );
 	unsigned short value = state == 0x80 ? scancode - 256 : scancode; //scancode ^ masque_state;
-	kprintf(&(sc_tty_user[3]), "\n Scancode : %04x XOR masque_state = %04x = value :  %04x ", scancode,masque_state, value);
+	kprintf(&(sc_tty_user[3]), "\nScancode : %04x XOR masque_state = %04x = value :  %04x ", scancode,masque_state, value);
 
 }
