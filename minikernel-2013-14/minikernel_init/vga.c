@@ -61,8 +61,28 @@ static nblines, nbcols;
 static char *vidmem;
 static int vidport;
 
-subscreen sc_alive, sc_ttyS0, sc_ttyS1, sc_kernel, sc_user;
 
+subscreen sc_alive, sc_ttyS0, sc_ttyS1, sc_kernel, sc_user;
+subscreen sc_tty_user[4];
+subscreen sc_tty_info[4];
+
+
+void printborder (subscreen* psc){
+	int nby = psc->nblines;
+	int nbx = psc->nbcols;
+	int i;
+	char c = 3*'&';
+	char* border = psc->vidmem - (nbcols + 1)*2;
+	for(i=0;i<nbx+2;i++){
+		border[1+2*i]=c;
+		border[1+2*(i + nbcols * (nby + 1))]=c;
+	}
+	for(i=1;i<=nby;i++){
+		border[1+2*(i * nbcols)]=c;
+		border[1+2*(i * nbcols + nbx + 1)]=c;
+	}
+	return;
+}
 
 void vga_init()
 {
@@ -111,7 +131,7 @@ int i;
 
 	/* init kernel scroll screen */
 	sc_kernel.vidmem= sc_ttyS1.vidmem + sc_ttyS1.nblines * nbcols * 2;
-	sc_kernel.nblines= 4;
+	sc_kernel.nblines= 1;
 	sc_kernel.nbcols= nbcols;
 	sc_kernel.cline=0;
 	sc_kernel.ccol=0;
@@ -123,6 +143,38 @@ int i;
 	sc_user.nbcols= nbcols;
 	sc_user.cline=0;
 	sc_user.ccol=0;
+	
+	int j;
+	int taille_info = 1;
+	int largeur_bordure = 1;
+
+	for(j = 0;j < 4; j++){
+		int decalage_info=0;
+		decalage_info=+ nbcols * largeur_bordure;
+		decalage_info+= largeur_bordure;
+		decalage_info+= j * (nbcols / 4);
+
+		sc_tty_info[j].vidmem= sc_user.vidmem + 2*decalage_info;
+		sc_tty_info[j].nblines= taille_info;
+		sc_tty_info[j].nbcols= (nbcols - 5)/4;
+		sc_tty_info[j].cline=0;
+		sc_tty_info[j].ccol=0;
+
+		printborder(&sc_tty_info[j]);
+
+		int decalage_user=0;
+		decalage_user+= nbcols * sc_tty_info[j].nblines;
+		decalage_user+= nbcols * largeur_bordure;
+		
+		sc_tty_user[j].vidmem= sc_tty_info[j].vidmem + decalage_user * 2;
+		sc_tty_user[j].nblines= sc_user.nblines - sc_tty_info[j].nblines;
+		sc_tty_user[j].nblines-= 3*largeur_bordure;
+		sc_tty_user[j].nbcols= sc_tty_info[j].nbcols;
+		sc_tty_user[j].cline=0;
+		sc_tty_user[j].ccol=0;
+
+		printborder(&sc_tty_user[j]);
+	}
 }
 
 static void vkprintf(subscreen* psc, const char* fmt, va_list args);
@@ -132,28 +184,31 @@ void kprintc(subscreen* psc, char c)
 {
 	int x,y,pos;
 
+	
+
 	x = psc->ccol;
 	y = psc->cline;
 
-	if ( c == '\n' ) {
+	if ( c == '\n') {
 		x = 0;
 		if ( ++y >= psc->nblines ) {
 			scroll(psc);
 			y--;
 		}
 	} else {
-		psc->vidmem [ ( x + psc->nbcols * y ) * 2 ] = c; 
+		psc->vidmem [ x * 2 + nbcols * y * 2 ] = c; 
 		if ( ++x >= psc->nbcols ) {
 			x = 0;
-			if ( ++y >= psc->nblines ) {
-				scroll(psc);
+			y++;
+			if ( y >= psc->nblines ) {
+				scroll(psc); 
 				y--;
 	}	}	}
 
 	psc->ccol  = x;
 	psc->cline = y;
-#if 0
-	pos = (x + cols * y) * 2;	/* Update cursor position */
+#if 0 
+	pos = (x + nbcols * y) * 2;	/* Update cursor position */
 	outb_p(14, vidport);
 	outb_p(0xff & (pos >> 9), vidport+1);
 	outb_p(15, vidport);
@@ -193,13 +248,16 @@ static void scroll(subscreen *psc)
 {
 	int i;
 
-	if ( psc->nblines>1 )
-		memcpy ( psc->vidmem,
-			 psc->vidmem + psc->nbcols * 2,
-			( psc->nblines - 1 ) * psc->nbcols * 2
-		);
-	for ( i = ( psc->nblines - 1 ) * psc->nbcols * 2;
-			i < psc->nblines * psc->nbcols * 2; i += 2 )
+	if ( psc->nblines>1 ){
+		for(i=0;i<psc->nblines-1;i++){
+			memcpy ( psc->vidmem + i*nbcols*2,
+			 	psc->vidmem + (i+1)*nbcols*2,
+				psc->nbcols * 2
+			);
+	}}
+	int last = (psc->nblines - 1) * nbcols * 2;
+	for ( i = last;
+			i < last + psc->nbcols * 2 ;i += 2 )
 		psc->vidmem[i] = ' ';
 }
 
