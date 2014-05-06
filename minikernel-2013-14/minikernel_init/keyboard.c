@@ -52,46 +52,7 @@ void do_scancode(int scancode, int down){
 
 void kbd_output(int scancode)
 {
-<<<<<<< HEAD
 
 	int state = scancode & KEY_UP;
 	do_scancode(scancode, state);
-=======
-<<<<<<< HEAD
-	int state = scancode & KEY_UP;
-	do_scancode(scancode, state);
-	/*
-	 * kprintc(&(sc_tty_info[0]),'a');
-	 * kprintc(&(sc_tty_user[0]),'a');
-	 * kprintc(&(sc_tty_info[1]),'b');
-	 * kprintc(&(sc_tty_user[1]),'b');
-	 * kprintc(&(sc_tty_info[2]),'c');
-	 * kprintc(&(sc_tty_user[2]),'c');
-	 * kprintc(&(sc_tty_info[3]),'d');
-	 * kprintc(&(sc_tty_user[3]),'d');
-	 * */
-
-	kprintf(&(sc_tty_user[0]), "\nScancode : %04x ET masque_state : %04x = state : %04x ", scancode,masque_state, state );
-	unsigned short value = state == 0x80 ? scancode - 256 : scancode; //scancode ^ masque_state;
-	kprintf(&(sc_tty_user[3]), "\nScancode : %04x XOR masque_state = %04x = value : %04x ", scancode,masque_state, value);
-=======
-	unsigned short masque_state = 0x80;
-	unsigned short state = scancode & masque_state;
-	/*
-	kprintc(&(sc_tty_info[0]),'a');
-	kprintc(&(sc_tty_user[0]),'a');
-	kprintc(&(sc_tty_info[1]),'b');
-	kprintc(&(sc_tty_user[1]),'b');	
-	kprintc(&(sc_tty_info[2]),'c');
-	kprintc(&(sc_tty_user[2]),'c');
-	kprintc(&(sc_tty_info[3]),'d');
-	kprintc(&(sc_tty_user[3]),'d');
-	*/
-	
-	kprintf(&(sc_tty_user[0]), "\nScancode : %04x ET masque_state : %04x = state : %04x ", scancode,masque_state, state );
-	unsigned short value = state == 0x80 ? scancode - 256 : scancode; //scancode ^ masque_state;
-	kprintf(&(sc_tty_user[3]), "\nScancode : %04x XOR masque_state = %04x = value :  %04x ", scancode,masque_state, value);
-
->>>>>>> c2993f155e022fdf7ff25749334b9a19990ccac2
->>>>>>> 3a53a138055713ee52c6b0a3d57d4e1e8824d801
 }

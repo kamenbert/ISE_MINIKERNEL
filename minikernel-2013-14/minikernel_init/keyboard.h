@@ -12,7 +12,7 @@ struct KbdState{
 			// dans le buffer
 };
 
-struct KbdState kbd_State;
+struct KbdState kbdState;
 
 char kbdBuffer[KBD_BUFFER_SIZE];
 
