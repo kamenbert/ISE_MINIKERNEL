@@ -2,10 +2,19 @@
 #define KEYBOARD_H
 
 #define KBD_BUFFER_SIZE 2000
-#define KBD_KEY_NUMBER 127
+#define KBD_KEY_NUMBER 128
+#define KEY_UP 0x80
+
+struct KbdState{
+	// ajouter un pointeur vers le buffer du processus courant
+	int nbElements;	// represente le nombre d'element present dans le buffer
+	int echo; 	// Mis a vrai, permet d'afficher les caracteres ajoute
+			// dans le buffer
+};
+
+struct KbdState kbd_State;
 
 char kbdBuffer[KBD_BUFFER_SIZE];
-char kbdKeyPressed[127];
 
 /**********************************************************************/
 /**** Initialisation of the keyboard				   ****/
