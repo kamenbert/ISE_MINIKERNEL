@@ -3,6 +3,7 @@
 #include "keys.h"
 
 #define ALT	56
+#define TAB	15
 #define SHIFT_L	42
 #define SHIFT_R 54
 #define CAPSLOCK 58
@@ -14,7 +15,7 @@
 /**
  * Status of the keyboard
  **/
-struct KbdState
+struct Kbd_State
 {
 	// ajouter un pointeur vers le buffer du processus courant
 	int nbElements;	// represente le nombre d'element present dans le buffer
@@ -24,7 +25,7 @@ struct KbdState
 	int alt;	// Vrai si alt est enfoncé
 };
 
-struct KbdState kbdState;
+struct Kbd_State kbd_state;
 
 
 
@@ -35,10 +36,10 @@ struct KbdState kbdState;
 void kbd_init()
 {
 	int i;
-	kbdState.nbElements = 0;
-	kbdState.echo = 1;
-	kbdState.maj = 0;
-	kbdState.alt = 0;
+	kbd_state.nbElements = 0;
+	kbd_state.echo = 1;
+	kbd_state.maj = 0;
+	kbd_state.alt = 0;
 
 
 	/* init irq1 entry 0x21 (clavier) */
@@ -74,16 +75,22 @@ void kbd_pushBuffer(char c){
 }
 
 /**
+ * Pop the first char out of the current buffer
+ **/
+char kbd_popBuffer(){
+
+}
+/**
  * Return the key value of the scancode
  **/
 char kbd_translateScancode(int scancode){
-	return !kbdState.maj ? keys[scancode -1] : highKeys[scancode-1];
+	return !kbd_state.maj ? keys[scancode -1] : highKeys[scancode-1];
 }
 
 /**
  * Do the appropriate operation for the input scancode
  */
-void do_scancode(int scancode, int up)
+void kbd_doScancode(int scancode, int up)
 {
 	// Action lors du levé d'une touche
 	if(up)
@@ -92,11 +99,11 @@ void do_scancode(int scancode, int up)
 
 		switch(scancode){
 			case ALT : 
-				kbdState.alt = 0; // désactivation de ALT
+				kbd_state.alt = 0; // désactivation de ALT
 				break;
 			case SHIFT_L :
 			case SHIFT_R :
-				kbdState.maj = 0; // désactivation des majuscules
+				kbd_state.maj = !kbd_state.maj; // désactivation des majuscules
 				break;
 			default : 
 				break; // sinon rien
@@ -105,21 +112,24 @@ void do_scancode(int scancode, int up)
 	else{
 		switch(scancode){
 			case ALT : 
-				kbdState.alt = 1; // Activation de ALT
+				kbd_state.alt = 1; // Activation de ALT
 				break;
 			case SHIFT_L :
 			case SHIFT_R :
 			case CAPSLOCK :
-				kbdState.maj = 1; // activation des majuscules
+				kbd_state.maj = !kbd_state.maj; // activation des majuscules
+				break;
+			case TAB :
+				kbd_changeFocus(-1);
 				break;
 			default : // traitement plus complet
 
-				if(kbdState.alt && scancode == ENTER)
+				if(kbd_state.alt && scancode == ENTER)
 				{
 					kbd_changeProcessState();
 					break;
 				}
-				if(kbdState.alt &&  ONE <= scancode && scancode <= FOUR)
+				if(kbd_state.alt &&  ONE <= scancode && scancode <= FOUR)
 				{
 					kbd_changeFocus(scancode-1);
 					break;
@@ -130,9 +140,9 @@ void do_scancode(int scancode, int up)
 				// Si c différent de '\0'
 				if(c) kbd_pushBuffer(c);
 
-				if(kbdState.echo)
+				if(kbd_state.echo && c)
 				{
-					kprintf(&(sc_tty_user[0]), "\n%c", c);
+					kprintf(&(sc_tty_user[0]), "%c", c);
 				}
 				break;
 		}
@@ -146,5 +156,5 @@ void kbd_output(int scancode)
 {
 
 	int state = scancode & KEY_UP;
-	do_scancode(scancode, state);
+	kbd_doScancode(scancode, state);
 }

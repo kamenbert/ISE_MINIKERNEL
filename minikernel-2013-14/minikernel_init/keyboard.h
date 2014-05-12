@@ -5,11 +5,22 @@
 #define KBD_KEY_NUMBER 88
 #define KEY_UP 0x80
 
-char kbdBuffer[KBD_BUFFER_SIZE];
 
 /**********************************************************************/
 /**** Initialisation of the keyboard				   ****/
 void kbd_init();
+
+/**********************************************************************/
+/**** Environement changes					   ****/
+void kbd_changeProcessState();
+void kbd_changeFocus(int next);
+
+
+
+/**********************************************************************/
+/**** Manipulation of the buffer				   ****/
+void kbd_pushBuffer(char c);
+char kbd_popBuffer();
 
 /**********************************************************************/
 /**** Manage the keyboard interrupt				   ****/
