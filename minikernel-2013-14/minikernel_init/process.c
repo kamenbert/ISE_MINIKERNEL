@@ -57,7 +57,7 @@ int init_process() {
 }
 
 //le scheduler T'AS VU
-int scheduler() {
+void scheduler() {
 	int found_next = 0; 
 	int i;
 	for(i = 0; i < 4; i++) {
@@ -65,7 +65,7 @@ int scheduler() {
 		}
 		if(task_table[i]->state == SLEEPING) { 
 			task_table[i]->nb_ticks_sleeping++;
-			task_table[i]->sleeping_length--;
+			task_table[i]->sleep_length--;
 			if(task_table[i]->sleep_length < 1 && found_next == 0) {
 				found_next = 1;
 				current_ = i;
@@ -88,5 +88,5 @@ int scheduler() {
 		}
 		current = task_table[current_];
 	}
-
+}
 
