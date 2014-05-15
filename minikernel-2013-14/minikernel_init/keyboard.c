@@ -1,6 +1,7 @@
 #include "kernel.h"
 #include "keyboard.h"
 #include "keys.h"
+#include "process.h"
 
 #define ALT	56
 #define TAB	15
@@ -17,8 +18,6 @@
  **/
 struct Kbd_State
 {
-	// ajouter un pointeur vers le buffer du processus courant
-	int nbElements;	// represente le nombre d'element present dans le buffer
 	int echo; 	// Mis a vrai, permet d'afficher les caracteres ajoute
 	// dans le buffer
 	int maj;	// Vrai si maj
@@ -36,7 +35,6 @@ struct Kbd_State kbd_state;
 void kbd_init()
 {
 	int i;
-	kbd_state.nbElements = 0;
 	kbd_state.echo = 1;
 	kbd_state.maj = 0;
 	kbd_state.alt = 0;
@@ -57,33 +55,81 @@ void kbd_init()
  * Change the current process state to stopped if he is running
  * and to running if he is stopped
  **/ 
-void kbd_changeProcessState(){
+void kbd_changeProcessState()
+{
+	if(current->state == STOPPED)
+		current->state = RUNNING;
+	else
+	{
+		if(current->state == RUNNING)
+			current->state = STOPPED;
+	}
 }
 
 /**
  * Move the focus to the "next" process
  **/
-void kbd_changeFocus(int next){
+void kbd_changeFocus(int next)
+{
+	focus = task_table[next];
+}
 
+/**
+ * Return true if the current buffer is empty,
+ * false otherwise
+ **/
+int empty()
+{
+	return current->buffer_filling == 0;
+}
+
+/**
+ * Return true if the focused buffer is full,
+ * false otherwise
+ **/
+int full()
+{
+	return focus->buffer_filling == KBD_BUFFER_SIZE;
 }
 
 /**
  * Put the character c in the current buffer
  **/
-void kbd_pushBuffer(char c){
+void kbd_pushBuffer(char c)
+{
+	// If the buffer is full we do nothing
+	if(full())
+		return;
 
+	// Otherwise, we add the character at the end
+	// of the buffer
+	focus->buffer[focus->buffer_filling] = c;
+	focus->buffer_filling++;
 }
 
 /**
  * Pop the first char out of the current buffer
  **/
-char kbd_popBuffer(){
-
+char kbd_popBuffer()
+{
+	// If the buffer is full we do nothing
+	if(empty())
+		return;
+	// Otherwise, we pop out the character at the head
+	// of the buffer
+	char c = current->buffer[0];
+	int i;
+	for(i=0; i<current->buffer_filling-1; i++)
+		current->buffer[i]=current->buffer[i+1];
+			
+	current->buffer_filling--;
 }
+
 /**
  * Return the key value of the scancode
  **/
-char kbd_translateScancode(int scancode){
+char kbd_translateScancode(int scancode)
+{
 	return !kbd_state.maj ? keys[scancode -1] : highKeys[scancode-1];
 }
 

@@ -2,6 +2,8 @@
 #define PROCESS_H
 
 #include "kernel.h"
+#include "keyboard.h"
+
 #define DEAD 0
 #define SLEEPING 1
 #define RUNNING 2

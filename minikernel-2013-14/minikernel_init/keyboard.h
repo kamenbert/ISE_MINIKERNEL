@@ -1,7 +1,7 @@
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 
-#define KBD_BUFFER_SIZE 2000
+#define KBD_BUFFER_SIZE 1024
 #define KBD_KEY_NUMBER 88
 #define KEY_UP 0x80
 
