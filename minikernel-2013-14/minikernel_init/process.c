@@ -65,27 +65,28 @@ int scheduler() {
 		}
 		if(task_table[i]->state == SLEEPING) { 
 			task_table[i]->nb_ticks_sleeping++;
-			if(task_table[i]->nb_ticks_sleeping < task_table[i]->task_table[i]->sleep_length && found_next == 0) {
+			task_table[i]->sleeping_length--;
+			if(task_table[i]->task_table[i]->sleep_length < 1 && found_next == 0) {
 				found_next = 1;
 				current_ = i;
 				task_table[i]->state = RUNNING;
 				task_table[i]->nb_ticks_active++;
-			}
+			} else {
+				kprintf(task_table[i]->tty_info, "\n SleepyHead:%d",task_table[i]->sleep_length);			
+			}	
 		}
-		if(task_table[i]->state == RUNNNING) {
-			if(found_next == 0) {
-				found_next = 1;
-				current_ = i;
-				task_table[i]->nb_ticks_active++;
-			}
+		if(task_table[i]->state == RUNNNING && found_next == 0) {
+			found_next = 1;
+			current_ = i;
+			task_table[i]->nb_ticks_active++;
 		}
 		if(task_table[i]->state != DEAD) {
 			task_table[i]->nb_ticks_alive++;
 			kprintf(task_table[i]->tty_info, "\n Stayin'Alive:%d",task_table[i]->nb_ticks_alive);			
 		} else {
 			kprintf(task_table[i]->tty_info, "\n DEAD");		
+		}
+		current = task_table[current_];
 	}
-	current = task_table[current_];
-}
-	
+
 
