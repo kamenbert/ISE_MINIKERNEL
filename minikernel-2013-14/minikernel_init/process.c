@@ -13,6 +13,7 @@ struct task_struct* init_struct_task(int tty_user, int tty_info) {
 	int tss->es = tss->cs = tss->ss = tss->ds = tss->fs = tss->gs = 0;
 	tss->nb_ticks_sleep = 0;
 	tss->nb_ticks_alive = 0;
+	tss->nb_ticks_active = 0;
 	tss->sleep_length = 0; 
 	tss->tty_user = &sc_tty_user[tty_user];
 	tss->tty_info = &sc_tty_info[tty_info];
@@ -55,16 +56,34 @@ int init_process() {
 	return 0;
 }
 
-/*
+//le scheduler T'AS VU
 int scheduler() {
-	int state = DEAD;
-	int f = focus_
-	while() {
-		f = (f+1)%4;
-		if(task_table[f]->state == DEAD) { 
-				continue;
+	int found_next = 0; 
+	int i;
+	for(i = 0; i < 4; i++) {
+		if(task_table[i]->state == DEAD) { 
 		}
-		if(task_table[f]->state == SLEEPING) { 
-			task_table[f]->nb_ticks_sleeping++;
-			if(task_table[f]->nb_ticks_sleeping 
-*/				
+		if(task_table[i]->state == SLEEPING) { 
+			task_table[i]->nb_ticks_sleeping++;
+			if(task_table[i]->nb_ticks_sleeping < task_table[i]->task_table[i]->sleep_length && found_next == 0) {
+				found_next = 1;
+				current_ = i;
+				task_table[i]->state = RUNNING;
+				task_table[i]->nb_ticks_active++;
+			}
+		}
+		if(task_table[i]->state == RUNNNING) {
+			if(found_next == 0) {
+				found_next = 1;
+				current_ = i;
+				task_table[i]->nb_ticks_active++;
+			}
+		}
+		if(task_table[i]->state != DEAD) {
+			task_table[i]->nb_ticks_alive++;
+		}		
+	}
+	current = task_table[current_];
+}
+	
+
