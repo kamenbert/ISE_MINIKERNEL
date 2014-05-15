@@ -66,7 +66,7 @@ int scheduler() {
 		if(task_table[i]->state == SLEEPING) { 
 			task_table[i]->nb_ticks_sleeping++;
 			task_table[i]->sleeping_length--;
-			if(task_table[i]->task_table[i]->sleep_length < 1 && found_next == 0) {
+			if(task_table[i]->sleep_length < 1 && found_next == 0) {
 				found_next = 1;
 				current_ = i;
 				task_table[i]->state = RUNNING;
