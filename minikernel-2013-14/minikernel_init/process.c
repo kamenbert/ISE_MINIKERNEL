@@ -81,7 +81,9 @@ int scheduler() {
 		}
 		if(task_table[i]->state != DEAD) {
 			task_table[i]->nb_ticks_alive++;
-		}		
+			kprintf(task_table[i]->tty_info, "\n Stayin'Alive:%d",task_table[i]->nb_ticks_alive);			
+		} else {
+			kprintf(task_table[i]->tty_info, "\n DEAD");		
 	}
 	current = task_table[current_];
 }
