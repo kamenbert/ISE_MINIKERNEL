@@ -14,6 +14,10 @@
 */
 #define SCREEN_INFO (*(struct screen_info *)0x90000)
 
+
+
+
+
 struct screen_info {
 	unsigned char  orig_x;			/* 0x00 */
 	unsigned char  orig_y;			/* 0x01 */
@@ -61,6 +65,21 @@ static nblines, nbcols;
 static char *vidmem;
 static int vidport;
 
+void outb_p (unsigned   char   value, unsigned short port) {
+	__asm__ __volatile__("out" "b" " %"   "b"   "0,%"  "w"  "1"  "\noutb %%al,$0x80" : : "a"(value),"Nd" (port));
+	}
+
+void cursor_update(subscreen * psc){ 
+	int x = psc->ccol;
+	int y = psc->cline;
+
+	int pos = (psc->vidmem - vidmem) + (x + nbcols * y) * 2;	
+	/* Update cursor position */
+	outb_p(14, vidport);
+	outb_p(0xff & (pos >> 9), vidport+1);
+	outb_p(15, vidport);
+	outb_p(0xff & (pos >> 1), vidport+1);
+}
 
 subscreen sc_alive, sc_ttyS0, sc_ttyS1, sc_kernel, sc_user;
 subscreen sc_tty_user[4];
@@ -211,12 +230,8 @@ void kprintc(subscreen* psc, char c)
 
 	psc->ccol  = x;
 	psc->cline = y;
-#if 0 
-	pos = (x + nbcols * y) * 2;	/* Update cursor position */
-	outb_p(14, vidport);
-	outb_p(0xff & (pos >> 9), vidport+1);
-	outb_p(15, vidport);
-	outb_p(0xff & (pos >> 1), vidport+1);
+#if 1 
+	cursor_update(psc);
 #endif
 }
 
@@ -398,7 +413,7 @@ void kbackspace(subscreen* psc){
 		if (y <= 0){
 			return ;
 		}else{
-			x = psc->nbcols;
+			x = psc->nbcols - 1;
 			y --;
 		}
 	}else{
@@ -407,5 +422,8 @@ void kbackspace(subscreen* psc){
 	psc->vidmem[x*2 + 2*(nbcols * y)] = ' ';
 	psc->ccol = x;
 	psc->cline = y;
+	
+	cursor_update(psc);
+
 	return ;
 }
