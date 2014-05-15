@@ -17,9 +17,11 @@ extern subscreen sc_tty_user[];
 void kprintc(subscreen*, char c);
 void kprints(subscreen*, const char* s);
 void kprintf(subscreen*, const char* fmt, ...);
+void kbackspace(subscreen*);
 
 /**********************************************************************/
 /****  functions for initializing                                  ****/
+
 
 void vga_init();
 void ttyS_init();

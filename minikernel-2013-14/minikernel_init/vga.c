@@ -111,8 +111,11 @@ int i;
 	sc_alive.nbcols= nbcols;
 	sc_alive.cline=0;
 	sc_alive.ccol=0;
-	nbl--;
+	nbl-=sc_alive.nblines;
+	
 
+
+#if 0
 	/* init sc_ttyS0 screen */
 	sc_ttyS0.vidmem= sc_alive.vidmem + sc_alive.nblines * nbcols * 2;
 	sc_ttyS0.nblines= 1;
@@ -123,7 +126,7 @@ int i;
 
 	/* init sc_ttyS1 screen */
 	sc_ttyS1.vidmem= sc_ttyS0.vidmem + sc_ttyS0.nblines * nbcols * 2;
-	sc_ttyS1.nblines= 1;
+	sc_ttyS1.nblines= 0;
 	sc_ttyS1.nbcols= nbcols;
 	sc_ttyS1.cline=0;
 	sc_ttyS1.ccol=0;
@@ -131,14 +134,15 @@ int i;
 
 	/* init kernel scroll screen */
 	sc_kernel.vidmem= sc_ttyS1.vidmem + sc_ttyS1.nblines * nbcols * 2;
-	sc_kernel.nblines= 1;
+	sc_kernel.nblines= 0;
 	sc_kernel.nbcols= nbcols;
 	sc_kernel.cline=0;
 	sc_kernel.ccol=0;
 	nbl -= sc_kernel.nblines;
-
+#endif
+	
 	/* init user screen */
-	sc_user.vidmem= sc_kernel.vidmem + sc_kernel.nblines * nbcols * 2;
+	sc_user.vidmem= sc_alive.vidmem + sc_alive.nblines * nbcols * 2;
 	sc_user.nblines= nbl;
 	sc_user.nbcols= nbcols;
 	sc_user.cline=0;
@@ -384,3 +388,22 @@ leave_printarg:
 			continue;
 }	}	}
 
+void vga_backspace(subscreen* psc){
+	int x, y;
+
+	x = psc->ccol;
+	y = psc->cline;
+
+	if (x <= 0){
+		if (y <= 0){
+			return ;
+		}else{
+			x = psc->nbcols;
+			y --;
+		}
+	}else{
+		x--;
+	}
+	psc->vidmem[x + (nbcols * y)] = ' ';
+	return ;
+}
