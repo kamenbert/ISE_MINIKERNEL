@@ -6,6 +6,7 @@
 #define ALT	56
 #define TAB	15
 #define SHIFT_L	42
+#define BACKSPACE 14
 #define SHIFT_R 54
 #define CAPSLOCK 58
 #define ENTER	28
@@ -168,6 +169,8 @@ void kbd_doScancode(int scancode, int up)
 			case TAB :
 				kbd_changeFocus(-1);
 				break;
+			case BACKSPACE :
+				kbackspace(&(sc_tty_user[0]));
 			default : // traitement plus complet
 
 				if(kbd_state.alt && scancode == ENTER)

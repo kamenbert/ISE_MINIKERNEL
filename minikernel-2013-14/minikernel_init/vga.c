@@ -388,7 +388,7 @@ leave_printarg:
 			continue;
 }	}	}
 
-void vga_backspace(subscreen* psc){
+void kbackspace(subscreen* psc){
 	int x, y;
 
 	x = psc->ccol;
@@ -404,6 +404,8 @@ void vga_backspace(subscreen* psc){
 	}else{
 		x--;
 	}
-	psc->vidmem[x + (nbcols * y)] = ' ';
+	psc->vidmem[x*2 + 2*(nbcols * y)] = ' ';
+	psc->ccol = x;
+	psc->cline = y;
 	return ;
 }
