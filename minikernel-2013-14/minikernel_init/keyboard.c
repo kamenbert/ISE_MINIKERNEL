@@ -72,8 +72,19 @@ void kbd_changeProcessState()
  **/
 void kbd_changeFocus(int next)
 {
-	if(next == -1) next == (focus_ + 1) %4;
+	printborder(focus->tty_info,7);
+	printborder(focus->tty_user,7);
+	
+	if(next == -1) {
+		next = (focus_+1) %4;
+		focus_ = next;
+	}
 	focus = task_table[next];
+	
+	int green = 3;
+	printborder(focus->tty_info,green);
+	printborder(focus->tty_user,green);
+	return;
 }
 
 /**

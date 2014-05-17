@@ -22,6 +22,7 @@ void kprintc(subscreen*, char c);
 void kprints(subscreen*, const char* s);
 void kprintf(subscreen*, const char* fmt, ...);
 void kbackspace(subscreen*);
+void printborder(subscreen*, char);
 
 /**********************************************************************/
 /****  functions for initializing                                  ****/

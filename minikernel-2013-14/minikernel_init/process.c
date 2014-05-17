@@ -1,11 +1,16 @@
 #include "process.h"
 #include "kernel.h"
+
+struct task_struct task_struct_table[4];
+
 //create a process and return a pointer to it
 int init_struct_task(struct task_struct* tss,int tty_user, int tty_info) { 
 	
 	//tss passage en argument
 	//struct task_struct* tss = malloc(sizeof(struct task_struct));
+	
 	if(tss == NULL) {
+		kprintf(&(sc_tty_info[tty_info]),"Ca plante!!!");
 		return -1;//return NULL
 	}
 	tss->state = RUNNING;
@@ -15,8 +20,8 @@ int init_struct_task(struct task_struct* tss,int tty_user, int tty_info) {
 	tss->nb_ticks_alive = 0;
 	tss->nb_ticks_active = 0;
 	tss->sleep_length = 0; 
-	tss->tty_user = &sc_tty_user[tty_user];
-	tss->tty_info = &sc_tty_info[tty_info];
+	tss->tty_user = &(sc_tty_user[tty_user]);
+	tss->tty_info = &(sc_tty_info[tty_info]);
 	tss->buffer_filling = 0;
 
 	return 0;
@@ -24,13 +29,16 @@ int init_struct_task(struct task_struct* tss,int tty_user, int tty_info) {
 
 //initiate the task_table, return -1 if failed, 0 if ok.
 int init_task_table() {
-	
+	kprintf(&(sc_tty_user[0]),"Initialisation des process...\n");
 	int i;
-	for(i=0;i<4;i++){	
+	for(i=0;i<4;i++){
+		task_table[i]= &(task_struct_table[i]);
 		if( init_struct_task(task_table[i],i,i) < 0 ) {
 			return -1;
 		}
+		kprintf(task_table[i]->tty_info,"\n%d - Je suis cree",i);
 	}
+	kprintf(&(sc_tty_user[0]),"Initialisation des process termine.\n");
 	/*
 	task_table[1] = init_struct_task(1, 1); 
 	if(task_table[1] == NULL) {
@@ -55,10 +63,17 @@ int init_process() {
 		return -1;
 	}
 	focus = task_table[0]; // current focus
+	printborder(focus->tty_info,3);//bordur bleu
+	printborder(focus->tty_user,3);
 	current = task_table[0]; // current active process
 	focus_ = 0;
 	current_ = 0;
 	return 0;
+}
+
+//affichage des info mise à jours.
+void maj_info_process(struct task_struct* tss){
+	return;
 }
 
 //le scheduler T'AS VU
