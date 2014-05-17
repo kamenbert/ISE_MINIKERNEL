@@ -53,17 +53,17 @@ void kbd_init()
 }
 
 /**
- * Change the current process state to stopped if he is running
+ * Change the focused process state to stopped if he is running
  * and to running if he is stopped
  **/ 
 void kbd_changeProcessState()
 {
-	if(current->state == STOPPED)
-		current->state = RUNNING;
+	if(focus->state == STOPPED)
+		focus->state = RUNNING;
 	else
 	{
-		if(current->state == RUNNING)
-			current->state = STOPPED;
+		if(focus->state == RUNNING)
+			focus->state = STOPPED;
 	}
 }
 
@@ -94,7 +94,7 @@ int full()
 }
 
 /**
- * Put the character c in the current buffer
+ * Put the character c in the focused buffer
  **/
 void kbd_pushBuffer(char c)
 {
