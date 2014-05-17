@@ -72,6 +72,7 @@ void kbd_changeProcessState()
  **/
 void kbd_changeFocus(int next)
 {
+	if(next == -1) next == (focus_ + 1) %4;
 	focus = task_table[next];
 }
 
@@ -180,7 +181,8 @@ void kbd_doScancode(int scancode, int up)
 				}
 				if(kbd_state.alt &&  ONE <= scancode && scancode <= FOUR)
 				{
-					kbd_changeFocus(scancode-1);
+					// ONE = 2 && tab begin with 0
+					kbd_changeFocus(scancode-2); 
 					break;
 				}
 
