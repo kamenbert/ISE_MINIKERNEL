@@ -170,7 +170,7 @@ void kbd_doScancode(int scancode, int up)
 				kbd_changeFocus(-1);
 				break;
 			case BACKSPACE :
-				kbackspace(&(sc_tty_user[0]));
+				kbackspace(focus->tty_user);
 			default : // traitement plus complet
 
 				if(kbd_state.alt && scancode == ENTER)
@@ -191,7 +191,7 @@ void kbd_doScancode(int scancode, int up)
 
 				if(kbd_state.echo && c)
 				{
-					kprintf(&(sc_tty_user[0]), "%c", c);
+					kprintf(focus->tty_user, "%c", c);
 				}
 				break;
 		}
