@@ -49,6 +49,7 @@ startup_32:
  * Launch the mini kernel
  */
 	call interrupt_init
+	call init_process
 	call vga_init
 	call ttyS_init
 	call main_init

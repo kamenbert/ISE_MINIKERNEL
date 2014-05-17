@@ -1,6 +1,10 @@
 #ifndef KERNEL_H
 #define KERNEL_H
 
+#undef NULL
+#define NULL ((void *)0)
+
+
 /**********************************************************************/
 /**** sub screen, and print function                               ****/
 
@@ -36,5 +40,6 @@ int  ttyS_detect(unsigned int base);
 
 void minikernel_irq0();
 void do_minikernel_irq0();
+
 
 #endif

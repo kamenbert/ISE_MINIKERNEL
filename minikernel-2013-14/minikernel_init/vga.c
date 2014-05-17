@@ -65,6 +65,10 @@ static nblines, nbcols;
 static char *vidmem;
 static int vidport;
 
+subscreen sc_alive, sc_ttyS0, sc_ttyS1, sc_kernel, sc_user;
+subscreen sc_tty_user[4];
+subscreen sc_tty_info[4];
+
 void outb_p (unsigned   char   value, unsigned short port) {
 	__asm__ __volatile__("out" "b" " %"   "b"   "0,%"  "w"  "1"  "\noutb %%al,$0x80" : : "a"(value),"Nd" (port));
 	}
@@ -80,10 +84,6 @@ void cursor_update(subscreen * psc){
 	outb_p(15, vidport);
 	outb_p(0xff & (pos >> 1), vidport+1);
 }
-
-subscreen sc_alive, sc_ttyS0, sc_ttyS1, sc_kernel, sc_user;
-subscreen sc_tty_user[4];
-subscreen sc_tty_info[4];
 
 
 void printborder (subscreen* psc,char c){

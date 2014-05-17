@@ -11,6 +11,7 @@ ld86 -0 -s -o tmp/setup tmp/setup.o
 # generation du mini_kernel de base 
 gcc -m32 minikernel_init/gidt.c -o tmp/gidt ; tmp/gidt > minikernel_init/idt.h
 gcc -m32 -traditional -Iinclude -c minikernel_init/head.S -o tmp/head.o
+gcc -m32 -Iinclude -c minikernel_init/process.c -o tmp/process.o
 gcc -m32 -Iinclude -c minikernel_init/util.c -o tmp/util.o
 gcc -m32 -traditional -Iinclude -c minikernel_init/keyboard_irq.S -o tmp/keyboard_irq.o
 gcc -m32 -Iinclude -c minikernel_init/keyboard.c -o tmp/keyboard.o
@@ -30,6 +31,7 @@ gcc -m32 -Iinclude -c minikernel_user/ttyS_util.S -o tmp/ttyS_util.o
 # generation du kernel
 ld  -m elf_i386 -Ttext 0x1000 -e startup_32 -o tmp/minikernel.elf \
 	tmp/head.o \
+	tmp/process.o \
 	tmp/util.o \
 	tmp/keyboard_irq.o \
 	tmp/keyboard.o \

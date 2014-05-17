@@ -43,8 +43,8 @@ int current_;
 //INIT FUNCTIONS
 int init_process();
 int init_task_table();
-struct task_struct* init_struct_task(int tty_user, int tty_info);
-
+//struct task_struct* init_struct_task(int tty_user, int tty_info);
+int init_struct_task(struct task_struct* tss,int tty_user, int tty_info);
 
 
 // TODO

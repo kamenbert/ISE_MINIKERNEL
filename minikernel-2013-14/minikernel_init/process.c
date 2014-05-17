@@ -1,16 +1,16 @@
 #include "process.h"
-#include <stdlib.h>
-
+#include "kernel.h"
 //create a process and return a pointer to it
-struct task_struct* init_struct_task(int tty_user, int tty_info) { 
-
-	struct task_struct* tss = malloc(sizeof(struct task_struct));
+int init_struct_task(struct task_struct* tss,int tty_user, int tty_info) { 
+	
+	//tss passage en argument
+	//struct task_struct* tss = malloc(sizeof(struct task_struct));
 	if(tss == NULL) {
-		return NULL;
+		return -1;//return NULL
 	}
 	tss->state = RUNNING;
 	tss->eax = tss->ebx = tss->ecx = tss->edi = tss->esi = tss->ebp = tss->esp = tss->eip = 0;
-	int tss->es = tss->cs = tss->ss = tss->ds = tss->fs = tss->gs = 0;
+	tss->es = tss->cs = tss->ss = tss->ds = tss->fs = tss->gs = 0;
 	tss->nb_ticks_sleep = 0;
 	tss->nb_ticks_alive = 0;
 	tss->nb_ticks_active = 0;
@@ -19,15 +19,19 @@ struct task_struct* init_struct_task(int tty_user, int tty_info) {
 	tss->tty_info = &sc_tty_info[tty_info];
 	tss->buffer_filling = 0;
 
-	return tss;
+	return 0;
 }
 
 //initiate the task_table, return -1 if failed, 0 if ok.
 int init_task_table() {
-	task_table[0] = init_struct_task(0, 0); 
-	if(task_table[0] == NULL) {
-		return -1;
+	
+	int i;
+	for(i=0;i<4;i++){	
+		if( init_struct_task(task_table[i],i,i) < 0 ) {
+			return -1;
+		}
 	}
+	/*
 	task_table[1] = init_struct_task(1, 1); 
 	if(task_table[1] == NULL) {
 		return -1;
@@ -40,6 +44,7 @@ int init_task_table() {
 	if(task_table[3] == NULL) {
 		return -1;
 	}
+	*/
 	return 0;
 }
 
@@ -64,7 +69,7 @@ void scheduler() {
 		if(task_table[i]->state == DEAD) { 
 		}
 		if(task_table[i]->state == SLEEPING) { 
-			task_table[i]->nb_ticks_sleeping++;
+			task_table[i]->nb_ticks_sleep++;
 			task_table[i]->sleep_length--;
 			if(task_table[i]->sleep_length < 1 && found_next == 0) {
 				found_next = 1;
@@ -72,10 +77,10 @@ void scheduler() {
 				task_table[i]->state = RUNNING;
 				task_table[i]->nb_ticks_active++;
 			} else {
-				kprintf(task_table[i]->tty_info, "\n SleepyHead:%d",task_table[i]->sleep_length);			
+kprintf(task_table[i]->tty_info, "\n SleepyHead:%d",task_table[i]->sleep_length);			
 			}	
 		}
-		if(task_table[i]->state == RUNNNING && found_next == 0) {
+		if(task_table[i]->state == RUNNING && found_next == 0) {
 			found_next = 1;
 			current_ = i;
 			task_table[i]->nb_ticks_active++;

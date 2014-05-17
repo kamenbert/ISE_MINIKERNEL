@@ -1,6 +1,6 @@
 #include "syscall.h"
 #include "kernel.h"
-#include "null.h"
+
 
 #define READ 1
 #define WRITE 2
