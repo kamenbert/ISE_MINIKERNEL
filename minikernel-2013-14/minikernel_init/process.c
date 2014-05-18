@@ -1,17 +1,13 @@
 #include "process.h"
 #include "kernel.h"
 
-struct task_struct task_struct_table[4];
 
 //create a process and return a pointer to it
 int init_struct_task(struct task_struct* tss,int tty_user, int tty_info) { 
 	
-	//tss passage en argument
-	//struct task_struct* tss = malloc(sizeof(struct task_struct));
-	
 	if(tss == NULL) {
-		kprintf(&(sc_tty_info[tty_info]),"Ca plante!!!");
-		return -1;//return NULL
+		kprintf(&(sc_tty_info[tty_info]),"ERROR NULL POINTER");
+		return -1;
 	}
 	tss->state = RUNNING;
 	tss->eax = tss->ebx = tss->ecx = tss->edi = tss->esi = tss->ebp = tss->esp = tss->eip = 0;
@@ -36,23 +32,8 @@ int init_task_table() {
 		if( init_struct_task(task_table[i],i,i) < 0 ) {
 			return -1;
 		}
-		kprintf(task_table[i]->tty_info,"\n%d - Je suis cree",i+1);
+		kprintf(task_table[i]->tty_info,"\n%d - I've been created",i+1);
 	}
-	// kprintf(&(sc_tty_user[0]),"Initialisation des process termine.\n");
-	/*
-	task_table[1] = init_struct_task(1, 1); 
-	if(task_table[1] == NULL) {
-		return -1;
-	}
-	task_table[2] = init_struct_task(2, 2); 
-	if(task_table[2] == NULL) {
-		return -1;
-	}
-	task_table[3] = init_struct_task(3, 3); 
-	if(task_table[3] == NULL) {
-		return -1;
-	}
-	*/
 	return 0;
 }
 
@@ -63,7 +44,7 @@ int init_process() {
 		return -1;
 	}
 	focus = task_table[0]; // current focus
-	printborder(focus->tty_info,3);//bordur bleu
+	printborder(focus->tty_info,3); //blue border
 	printborder(focus->tty_user,3);
 	current = task_table[0]; // current active process
 	focus_ = 0;
@@ -71,12 +52,13 @@ int init_process() {
 	return 0;
 }
 
-//affichage des info mise à jours.
+//TODO
+//Displays infos updated.
 void maj_info_process(struct task_struct* tss){
 	return;
 }
 
-//le scheduler T'AS VU
+
 void scheduler() {
 	int found_next = 0; 
 	int i;
