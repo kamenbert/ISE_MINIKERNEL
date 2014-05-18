@@ -16,7 +16,7 @@ gcc -m32 -traditional -Iinclude -c minikernel_init/keyboard_irq.S -o tmp/keyboar
 gcc -m32 -Iinclude -c minikernel_init/keyboard.c -o tmp/keyboard.o
 gcc -m32 -traditional -Iinclude -c minikernel_init/syscall_handler.S -o tmp/syscall_handler.o
 gcc -m32 -Iinclude -c minikernel_init/syscall.c -o tmp/syscall.o
-gcc -m32 -Iinclude -c minikernel_init/syscall.c -o tmp/syscall.o
+gcc -m32 -Iinclude -c minikernel_init/sys_functions.c -o tmp/sys_functions.o
 gcc -m32 -Iinclude -fno-stack-protector -c minikernel_init/vga.c -o tmp/vga.o
 gcc -m32 -Iinclude -c minikernel_init/process.c -o tmp/process.o
 gcc -m32 -Iinclude -c minikernel_init/main.c -o tmp/main.o
@@ -36,6 +36,7 @@ ld  -m elf_i386 -Ttext 0x1000 -e startup_32 -o tmp/minikernel.elf \
 	tmp/keyboard.o \
 	tmp/syscall_handler.o \
 	tmp/syscall.o \
+	tmp/sys_functions.o \
 	tmp/vga.o \
 	tmp/process.o \
 	tmp/main.o \

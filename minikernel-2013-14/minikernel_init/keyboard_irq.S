@@ -3,6 +3,10 @@
 .globl kbd_irq1
 kbd_irq1:
 	cld
+	/* Acknowledge interrupt */
+	movl $0x20, %eax
+	outb %al, $0x20
+
 	
 	/* Save the registers */
 	pushl %eax
@@ -21,10 +25,6 @@ kbd_irq1:
 	pushl %eax
 	call kbd_output
 	addl $4, %esp
-
-	/* Acknowledge interrupt */
-	movl $0x20, %eax
-	outb %al, $0x20
 
 	/* Restore the registers */
 	popl %esp

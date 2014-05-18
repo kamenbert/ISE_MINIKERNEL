@@ -1,6 +1,6 @@
 #include "syscall.h"
 #include "kernel.h"
-
+#include "sys_functions.h"
 
 #define READ 1
 #define WRITE 2
@@ -25,14 +25,17 @@ void* syscall(int func, void* arg1)
 	void * ret = NULL;
 	switch(func)
 	{	
-		case READ: // TODO  appel de la fonction read
+		case READ: 
+			ret =  (void *) sys_read();
 			break;
-		case WRITE: // TODO appel de la fonction write      
+		case WRITE:
+			sys_write((char) arg1);
 			break;
-		case SLEEP: // TODO appel de la fonction sleep
+		case SLEEP: 
+			sys_sleep((unsigned int) arg1);
 			break;
 		default : 
 			break;
 	}
-
+	return ret;
 }

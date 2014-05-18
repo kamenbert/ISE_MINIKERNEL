@@ -46,10 +46,9 @@ int init_task_table();
 //struct task_struct* init_struct_task(int tty_user, int tty_info);
 int init_struct_task(struct task_struct* tss,int tty_user, int tty_info);
 
+void scheduler();
 
 // TODO
-// - Table des task_struct -> scheduler
-// - fonction d'init, cf vga.h, kernel.h (ne pas oublier d'initialiser focus et current)
-// - 
+// - LA VRAI TSS DE LA GDT
 
 #endif

@@ -29,16 +29,16 @@ int init_struct_task(struct task_struct* tss,int tty_user, int tty_info) {
 
 //initiate the task_table, return -1 if failed, 0 if ok.
 int init_task_table() {
-	kprintf(&(sc_tty_user[0]),"Initialisation des process...\n");
+	// kprintf(&(sc_tty_user[0]),"Initialisation des process...\n");
 	int i;
 	for(i=0;i<4;i++){
 		task_table[i]= &(task_struct_table[i]);
 		if( init_struct_task(task_table[i],i,i) < 0 ) {
 			return -1;
 		}
-		kprintf(task_table[i]->tty_info,"\n%d - Je suis cree",i);
+		kprintf(task_table[i]->tty_info,"\n%d - Je suis cree",i+1);
 	}
-	kprintf(&(sc_tty_user[0]),"Initialisation des process termine.\n");
+	// kprintf(&(sc_tty_user[0]),"Initialisation des process termine.\n");
 	/*
 	task_table[1] = init_struct_task(1, 1); 
 	if(task_table[1] == NULL) {
