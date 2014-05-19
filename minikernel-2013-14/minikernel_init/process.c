@@ -63,8 +63,8 @@ int init_process() {
 		return -1;
 	}
 	focus = task_table[0]; // current focus
-	printborder(focus->tty_info,3);//bordur bleu
-	printborder(focus->tty_user,3);
+	printborder(focus->tty_info,2);//bordur vert 
+	printborder(focus->tty_user,2);
 	current = task_table[0]; // current active process
 	focus_ = 0;
 	current_ = 0;

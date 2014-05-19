@@ -81,7 +81,7 @@ void kbd_changeFocus(int next)
 	}
 	focus = task_table[next];
 	
-	int green = 3;
+	int green = 2;
 	printborder(focus->tty_info,green);
 	printborder(focus->tty_user,green);
 	return;
