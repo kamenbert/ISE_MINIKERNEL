@@ -65,6 +65,7 @@ void kbd_changeProcessState()
 		if(focus->state == RUNNING)
 			focus->state = STOPPED;
 	}
+	scheduler();
 }
 
 /**

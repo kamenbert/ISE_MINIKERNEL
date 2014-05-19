@@ -1,6 +1,6 @@
 
 #include "kernel.h"
-
+#include "process.h"
 unsigned char  inb  (unsigned short port) { unsigned char  _v;  __asm__ __volatile__ ("in" "b" " %"  "w"  "1,%"   ""   "0"  : "=a" (_v) : "Nd" (port)   ); return _v; }
 /*
 unsigned char  inb_p (unsigned short port) { unsigned char  _v;  __asm__ __volatile__ ("in" "b" " %"  "w"  "1,%"   ""   "0"  "\noutb %%al,$0x80"   : "=a" (_v) : "Nd" (port)   ); return _v; }
@@ -55,4 +55,5 @@ static int time=0;
 		count=0;
 		time++;
 	}
+	scheduler();
 }

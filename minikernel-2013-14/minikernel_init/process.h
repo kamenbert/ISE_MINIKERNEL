@@ -26,6 +26,7 @@ struct task_struct{
 	int nb_ticks_sleep; //sleeping since how long ?
 	int nb_ticks_alive; // alive since how long ?
 	int nb_ticks_active; // how much has it been active ?
+	int nb_ticks_stopped; // how much has it been stopped ?
 	int sleep_length; //sleep time
 	char buffer[KBD_BUFFER_SIZE]; // buffer for reading
 	int buffer_filling; //filling of the buffer

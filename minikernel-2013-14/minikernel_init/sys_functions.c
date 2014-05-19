@@ -5,14 +5,14 @@
 void sys_sleep(unsigned int sec)
 {
 	current->state = SLEEPING;
-	current->sleep_length = sec;
+	current->sleep_length = sec*10;
 	scheduler();
 }
 
 
 void sys_write(char c)
 {
-	kprintf(current->tty_user,"%c", c);
+	kprintc(current->tty_user, c);
 }
 
 char sys_read()
