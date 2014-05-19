@@ -26,6 +26,7 @@ struct task_struct{
 	int nb_ticks_sleep; //sleeping since how long ?
 	int nb_ticks_alive; // alive since how long ?
 	int nb_ticks_active; // how much has it been active ?
+	int nb_ticks_stopped; // how much has it been stopped ?
 	int sleep_length; //sleep time
 	char buffer[KBD_BUFFER_SIZE]; // buffer for reading
 	int buffer_filling; //filling of the buffer
@@ -35,6 +36,7 @@ struct task_struct{
 struct task_struct* focus; // current focus
 struct task_struct* current; // current active process
 struct task_struct* task_table[4]; //process table
+struct task_struct task_struct_table[4]; //the real process table
 
 //I added these for my personnal convenience
 int focus_;
@@ -46,10 +48,9 @@ int init_task_table();
 //struct task_struct* init_struct_task(int tty_user, int tty_info);
 int init_struct_task(struct task_struct* tss,int tty_user, int tty_info);
 
+void scheduler();
 
 // TODO
-// - Table des task_struct -> scheduler
-// - fonction d'init, cf vga.h, kernel.h (ne pas oublier d'initialiser focus et current)
-// - 
+// - la vraie tss de la gdt
 
 #endif

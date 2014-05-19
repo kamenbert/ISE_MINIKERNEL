@@ -1,17 +1,13 @@
 #include "process.h"
 #include "kernel.h"
 
-struct task_struct task_struct_table[4];
 
 //create a process and return a pointer to it
 int init_struct_task(struct task_struct* tss,int tty_user, int tty_info) { 
-	
-	//tss passage en argument
-	//struct task_struct* tss = malloc(sizeof(struct task_struct));
-	
+
 	if(tss == NULL) {
-		kprintf(&(sc_tty_info[tty_info]),"Ca plante!!!");
-		return -1;//return NULL
+		kprintf(&(sc_tty_info[tty_info]),"ERROR NULL POINTER");
+		return -1;
 	}
 	tss->state = RUNNING;
 	tss->eax = tss->ebx = tss->ecx = tss->edi = tss->esi = tss->ebp = tss->esp = tss->eip = 0;
@@ -19,6 +15,7 @@ int init_struct_task(struct task_struct* tss,int tty_user, int tty_info) {
 	tss->nb_ticks_sleep = 0;
 	tss->nb_ticks_alive = 0;
 	tss->nb_ticks_active = 0;
+	tss->nb_ticks_stopped = 0;
 	tss->sleep_length = 0; 
 	tss->tty_user = &(sc_tty_user[tty_user]);
 	tss->tty_info = &(sc_tty_info[tty_info]);
@@ -29,30 +26,15 @@ int init_struct_task(struct task_struct* tss,int tty_user, int tty_info) {
 
 //initiate the task_table, return -1 if failed, 0 if ok.
 int init_task_table() {
-	kprintf(&(sc_tty_user[0]),"Initialisation des process...\n");
+	// kprintf(&(sc_tty_user[0]),"Initialisation des process...\n");
 	int i;
 	for(i=0;i<4;i++){
 		task_table[i]= &(task_struct_table[i]);
 		if( init_struct_task(task_table[i],i,i) < 0 ) {
 			return -1;
 		}
-		kprintf(task_table[i]->tty_info,"\n%d - Je suis cree",i);
+		//kprintf(task_table[i]->tty_info,"\n%d - created",i+1); //ne sert plus a rien
 	}
-	kprintf(&(sc_tty_user[0]),"Initialisation des process termine.\n");
-	/*
-	task_table[1] = init_struct_task(1, 1); 
-	if(task_table[1] == NULL) {
-		return -1;
-	}
-	task_table[2] = init_struct_task(2, 2); 
-	if(task_table[2] == NULL) {
-		return -1;
-	}
-	task_table[3] = init_struct_task(3, 3); 
-	if(task_table[3] == NULL) {
-		return -1;
-	}
-	*/
 	return 0;
 }
 
@@ -71,40 +53,62 @@ int init_process() {
 	return 0;
 }
 
-//affichage des info mise à jours.
+//TODO
+//Displays infos updated.
 void maj_info_process(struct task_struct* tss){
 	return;
 }
 
-//le scheduler T'AS VU
+
 void scheduler() {
 	int found_next = 0; 
 	int i;
 	for(i = 0; i < 4; i++) {
-		if(task_table[i]->state == DEAD) { 
-		}
-		if(task_table[i]->state == SLEEPING) { 
-			task_table[i]->nb_ticks_sleep++;
-			task_table[i]->sleep_length--;
-			if(task_table[i]->sleep_length < 1 && found_next == 0) {
-				found_next = 1;
-				current_ = i;
-				task_table[i]->state = RUNNING;
+		switch(task_table[i]->state) {
+			case DEAD :
+
+				kprintf(task_table[i]->tty_info, "\n DEAD");		
+				break;
+
+			case SLEEPING :
+				task_table[i]->nb_ticks_sleep++;
+				task_table[i]->nb_ticks_alive++;
+				task_table[i]->sleep_length--;
+				if(task_table[i]->sleep_length < 1 && found_next == 0) {
+					found_next = 1;
+					current_ = i;
+					task_table[i]->state = RUNNING;
+					task_table[i]->nb_ticks_active++;
+				} else {
+					if(task_table[i]->nb_ticks_alive%10==0) {
+						kprintf(task_table[i]->tty_info, "\n SLEEPING:%d",task_table[i]->sleep_length);			
+					}
+				}	
+				break;
+
+			case RUNNING :
 				task_table[i]->nb_ticks_active++;
-			} else {
-kprintf(task_table[i]->tty_info, "\n SleepyHead:%d",task_table[i]->sleep_length);			
-			}	
-		}
-		if(task_table[i]->state == RUNNING && found_next == 0) {
-			found_next = 1;
-			current_ = i;
-			task_table[i]->nb_ticks_active++;
-		}
-		if(task_table[i]->state != DEAD) {
-			task_table[i]->nb_ticks_alive++;
-			kprintf(task_table[i]->tty_info, "\n Stayin'Alive:%d",task_table[i]->nb_ticks_alive);			
-		} else {
-			kprintf(task_table[i]->tty_info, "\n DEAD");		
+				task_table[i]->nb_ticks_alive++;
+				if(found_next == 0) {
+					found_next = 1;
+					current_ = i;
+				}
+				if(task_table[i]->nb_ticks_alive%10==0) {
+					kprintf(task_table[i]->tty_info, "\n RUNNING:%d",(task_table[i]->nb_ticks_active)/10);			
+				}
+				break;
+
+
+			case STOPPED : 
+				task_table[i]->nb_ticks_stopped++;
+				task_table[i]->nb_ticks_alive++;
+				if(task_table[i]->nb_ticks_alive%10==0) {
+					kprintf(task_table[i]->tty_info, "\n STOPPED:%d",(task_table[i]->nb_ticks_stopped)/10);			
+				}
+				break;
+
+			default :
+				break;
 		}
 		current = task_table[current_];
 	}

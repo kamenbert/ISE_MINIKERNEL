@@ -3,6 +3,10 @@
 /************	int 0x80	************/
 .globl syscall_handler
 syscall_handler:
+	/* Acknowledge interrupt */
+	movl $0x20, %eax
+	outb %al, $0x20
+
 	
 	/* Save the registers */
 	pushl %eax
@@ -19,10 +23,6 @@ syscall_handler:
 	pushl %eax
 	call syscall
 	addl $8, %esp
-
-	/* Acknowledge interrupt */
-	movl $0x20, %eax
-	outb %al, $0x20
 
 	/* Restore the registers */
 	popl %esp

@@ -65,6 +65,7 @@ void kbd_changeProcessState()
 		if(focus->state == RUNNING)
 			focus->state = STOPPED;
 	}
+	scheduler();
 }
 
 /**
@@ -127,7 +128,7 @@ char kbd_popBuffer()
 {
 	// If the buffer is full we do nothing
 	if(empty())
-		return;
+		return (char) NULL;
 	// Otherwise, we pop out the character at the head
 	// of the buffer
 	char c = current->buffer[0];
