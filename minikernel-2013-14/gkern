@@ -1,5 +1,7 @@
+#!/bin/bash
 
-
+#supression des anciens fichiers temporaires
+rm tmp/*
 # generation du boot
 cc -m32 -traditional -E -Iinclude boot/bootsect.S > tmp/bootsect.s 
 as86 -0 -a -o tmp/bootsect.o tmp/bootsect.s
@@ -10,23 +12,23 @@ ld86 -0 -s -o tmp/setup tmp/setup.o
 
 # generation du mini_kernel de base 
 gcc -m32 minikernel_init/gidt.c -o tmp/gidt ; tmp/gidt > minikernel_init/idt.h
-gcc -m32 -traditional -Iinclude -c minikernel_init/head.S -o tmp/head.o
-gcc -m32 -Iinclude -c minikernel_init/util.c -o tmp/util.o
-gcc -m32 -traditional -Iinclude -c minikernel_init/keyboard_irq.S -o tmp/keyboard_irq.o
-gcc -m32 -Iinclude -c minikernel_init/keyboard.c -o tmp/keyboard.o
-gcc -m32 -traditional -Iinclude -c minikernel_init/syscall_handler.S -o tmp/syscall_handler.o
-gcc -m32 -Iinclude -c minikernel_init/syscall.c -o tmp/syscall.o
-gcc -m32 -Iinclude -c minikernel_init/sys_functions.c -o tmp/sys_functions.o
-gcc -m32 -Iinclude -fno-stack-protector -c minikernel_init/vga.c -o tmp/vga.o
-gcc -m32 -Iinclude -c minikernel_init/process.c -o tmp/process.o
-gcc -m32 -Iinclude -c minikernel_init/main.c -o tmp/main.o
-gcc -m32 -Iinclude -c minikernel_init/ttyS_asm.S -o tmp/ttyS_asm.o
-gcc -m32 -Iinclude -c minikernel_init/ttyS.c -o tmp/ttyS.o
+gcc -m32 -Iinclude -traditional 	-c minikernel_init/head.S 		-o tmp/head.o
+gcc -m32 -Iinclude 			-c minikernel_init/util.c 		-o tmp/util.o
+gcc -m32 -Iinclude -traditional 	-c minikernel_init/keyboard_irq.S 	-o tmp/keyboard_irq.o
+gcc -m32 -Iinclude 			-c minikernel_init/keyboard.c 		-o tmp/keyboard.o
+gcc -m32 -Iinclude -traditional 	-c minikernel_init/syscall_handler.S 	-o tmp/syscall_handler.o
+gcc -m32 -Iinclude 			-c minikernel_init/syscall.c 		-o tmp/syscall.o
+gcc -m32 -Iinclude 			-c minikernel_init/sys_functions.c 	-o tmp/sys_functions.o
+gcc -m32 -Iinclude -fno-stack-protector -c minikernel_init/vga.c 		-o tmp/vga.o
+gcc -m32 -Iinclude 			-c minikernel_init/process.c 		-o tmp/process.o
+gcc -m32 -Iinclude 			-c minikernel_init/main.c 		-o tmp/main.o
+gcc -m32 -Iinclude 			-c minikernel_init/ttyS_asm.S 		-o tmp/ttyS_asm.o
+gcc -m32 -Iinclude 			-c minikernel_init/ttyS.c 		-o tmp/ttyS.o
 
 
 # generation du mini_kernel  user 
-gcc -m32 -Iinclude -c minikernel_user/entry.c -o tmp/entry.o
-gcc -m32 -Iinclude -c minikernel_user/ttyS_util.S -o tmp/ttyS_util.o
+gcc -m32 -Iinclude 			-c minikernel_user/entry.c 		-o tmp/entry.o
+gcc -m32 -Iinclude 			-c minikernel_user/ttyS_util.S 		-o tmp/ttyS_util.o
 
 # generation du kernel
 ld  -m elf_i386 -Ttext 0x1000 -e startup_32 -o tmp/minikernel.elf \
@@ -44,7 +46,108 @@ ld  -m elf_i386 -Ttext 0x1000 -e startup_32 -o tmp/minikernel.elf \
 	tmp/ttyS.o \
 	tmp/entry.o \
 	tmp/ttyS_util.o
-objcopy -O binary -R .note -R .comment -S tmp/minikernel.elf tmp/minikernel
+objcopy -O binary -R .note -R .comment -S tmp/minikernel.elf tmp/minikernel.bin
+  
+# extension du kernel à 40Ko
+#dd if=tmp/minikernel.bin of=tmp/minikernel.extended count=1 bs=40960 conv=sync
+
+#
+##### compilation des programmes user ###
+#
+#entry_proc1=00000000 
+#entry_proc2=00000000 
+#entry_proc3=00000000 
+#entry_proc4=00000000 
+#exists_proc1=00000000
+#exists_proc2=00000000
+#exists_proc3=00000000
+#exists_proc4=00000000
+#
+#if [ $1 ]
+#then
+#	gcc -m32 -fno-stack-protector -Iuser_includes -c $1 -o tmp/user_proc/$1.o
+#	# libc.a comme dans "assembleur"?
+#	ld tmp/user_proc/{$1.o,libc.a} -m elf_i386 -Ttext 0 -Tdata 0x2000 -e main -o tmp/user_proc/$1.elf
+#	entry_proc1=$(objdump -d user_tmp/$1.elf | grep main | cut -f1 -d ' ')
+#	exists_proc1=11111111
+#	objcopy -O binary -R .note -R .comment -S user_proc/$1.elf tmp/user_proc/$1.bin
+#	dd if=tmp/user_proc/$1.bin of=tmp/user_proc/$1.extended count=1 bs=8192 conv=sync
+#fi
+#if [ $2 ]
+#then
+#	gcc -m32 -fno-stack-protector -Iuser_includes -c $2 -o tmp/user_proc/$2.o
+#	# libc.a comme dans "assembleur"?
+#	ld tmp/user_proc/{$2.o,libc.a} -m elf_i386 -Ttext 0 -Tdata 0x2000 -e main -o tmp/user_proc/$2.elf
+#	entry_proc1=$(objdump -d user_tmp/$2.elf | grep main | cut -f1 -d ' ')
+#	exists_proc1=11111111
+#	objcopy -O binary -R .note -R .comment -S user_proc/$2.elf tmp/user_proc/$2.bin
+#	dd if=tmp/user_proc/$2.bin of=tmp/user_proc/$2.extended count=1 bs=8192 conv=sync
+#fi
+#if [ $3 ]
+#then
+#	gcc -m32 -fno-stack-protector -Iuser_includes -c $3 -o tmp/user_proc/$3.o
+#	# libc.a comme dans "assembleur"?
+#	ld tmp/user_proc/{$3.o,libc.a} -m elf_i386 -Ttext 0 -Tdata 0x2000 -e main -o tmp/user_proc/$3.elf
+#	entry_proc1=$(objdump -d user_tmp/$3.elf | grep main | cut -f1 -d ' ')
+#	exists_proc1=11111111
+#	objcopy -O binary -R .note -R .comment -S user_proc/$3.elf tmp/user_proc/$3.bin
+#	dd if=tmp/user_proc/$3.bin of=tmp/user_proc/$3.extended count=1 bs=8192 conv=sync
+#fi
+#if [ $4 ]
+#then
+#	gcc -m32 -fno-stack-protector -Iuser_includes -c $4 -o tmp/user_proc/$4.o
+#	# libc.a comme dans "assembleur"?
+#	ld tmp/user_proc/{$4.o,libc.a} -m elf_i386 -Ttext 0 -Tdata 0x2000 -e main -o tmp/user_proc/$4.elf
+#	entry_proc1=$(objdump -d user_tmp/$4.elf | grep main | cut -f1 -d ' ')
+#	exists_proc1=11111111
+#	objcopy -O binary -R .note -R .comment -S user_proc/$4.elf tmp/user_proc/$4.bin
+#	dd if=tmp/user_proc/$4.bin of=tmp/user_proc/$4.extended count=1 bs=8192 conv=sync
+#fi
+
+
+# Cette table me paraît tellement fucking legit que je la pique à Pral.
+#echo -e "\x$(echo $entry_proc1 | cut -c7-8)\x$(echo $entry_proc1 \
+#	| cut -c5-6)\x$(echo $entry_proc1 | cut -c3-4)\x$(echo $entry_proc1 \
+#	| cut -c1-2)\x$(echo $exists_proc1 | cut -c7-8)\x$(echo $exists_proc1 \
+#	| cut -c5-6)\x$(echo $exists_proc1 | cut -c3-4)\x$(echo $exists_proc1 \
+#	| cut -c1-2)\x$(echo $entry_proc2 | cut -c7-8)\x$(echo $entry_proc2 \
+#	| cut -c5-6)\x$(echo $entry_proc2 | cut -c3-4)\x$(echo $entry_proc2 \
+#	| cut -c1-2)\x$(echo $exists_proc2 | cut -c7-8)\x$(echo $exists_proc2 \
+#	| cut -c5-6)\x$(echo $exists_proc2 | cut -c3-4)\x$(echo $exists_proc2 \
+#	| cut -c1-2)\x$(echo $entry_proc3 | cut -c7-8)\x$(echo $entry_proc3 \
+#	| cut -c5-6)\x$(echo $entry_proc3 | cut -c3-4)\x$(echo $entry_proc3 \
+#	| cut -c1-2)\x$(echo $exists_proc3 | cut -c7-8)\x$(echo $exists_proc3 \
+#	| cut -c5-6)\x$(echo $exists_proc3 | cut -c3-4)\x$(echo $exists_proc3 \
+#	| cut -c1-2)\x$(echo $entry_proc4 | cut -c7-8)\x$(echo $entry_proc4 \
+#	| cut -c5-6)\x$(echo $entry_proc4 | cut -c3-4)\x$(echo $entry_proc4 \
+#	| cut -c1-2)\x$(echo $exists_proc4 | cut -c7-8)\x$(echo $exists_proc4 \
+#	| cut -c5-6)\x$(echo $exists_proc4 | cut -c3-4)\x$(echo $exists_proc4 \
+#	| cut -c1-2)" > tmp/table
+
+
+#dd if=tmp/table of=tmp/table.extended count=1 bs=4096 conv=sync
+#
+## ajout de la table + processus après le kernel
+#if [ -z $1 ]
+#then
+#	cat tmp/minikernel.extended tmp/table.extended > tmp/minikernel
+#fi
+#if [ $1 ] && [ -z $2 ]
+#then
+#	cat tmp/minikernel.extended tmp/table.extended tmp/user_proc/$1.extended > tmp/minikernel
+#fi
+#if [ $2 ] && [ -z $3 ]
+#then
+#	cat tmp/minikernel.extended tmp/table.extended tmp/user_proc/$1.extended tmp/user_proc/$name2.extended > tmp/minikernel
+#fi
+#if [ $3 ] && [ -z $4 ]
+#then
+#	cat tmp/minikernel.extended tmp/table.extended tmp/user_proc/$1.extended tmp/user_proc/$name2.extended tmp/user_proc/$name3.extended > tmp/minikernel
+#fi
+#if [ $4 ]
+#then
+#	cat tmp/minikernel.extended tmp/table.extended tmp/user_proc/$1.extended tmp/user_proc/$name2.extended tmp/user_proc/$name3.extended tmp/user_proc/$name4.extended > tmp/minikernel
+#fi
 
 # generation de l'image bootable
 test -f tmp/build || cc boot/build.c -o tmp/build
