@@ -17,7 +17,7 @@ void go_inactive(struct task_struct* tss) {
 	int fs;
 	int gs;
 
-	__asm__ (
+	__asm__ __volatile__ (
 		"movl %%eax, %0 ;"
 		"movl %%ebx, %1 ;"
 		"movl %%ecx, %2 ;"
@@ -62,7 +62,7 @@ void go_inactive(struct task_struct* tss) {
 			
 }
 
-void get_active(struct task_struct* tss) {
+void go_active(struct task_struct* tss) {
 	long eax = tss->eax;
 	long ebx = tss->ebx;
 	long ecx = tss->ecx;
@@ -77,7 +77,7 @@ void get_active(struct task_struct* tss) {
 	int fs = tss->fs;
 	int gs = tss->gs;
 
-	__asm__ (
+	__asm__ __volatile__ (
 		"movl %0, %%eax;"
 		"movl %1, %%ebx;"
 		"movl %2, %%ecx;"
