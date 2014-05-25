@@ -112,7 +112,7 @@ va_end(args);
 }
 
 
-
+#if 0
 int scanf_usr( const char* fmt, char* addr){
 
 char*	buf=addr;// = malloc(BUF_LEN*sizeof(char));
@@ -170,6 +170,6 @@ fin:
 *(buf+i) = '\0';
 buf = NULL;
 return i;
-}       
+}
 
-        
+#endif
