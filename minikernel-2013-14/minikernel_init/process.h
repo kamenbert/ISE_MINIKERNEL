@@ -11,6 +11,9 @@
 #define STOPPED 4
 
 struct task_struct{
+	long ebx, ecx, edi, esi, ebp, esp;
+	int es, cs, ss, ds, fs, gs;
+	long eip;
 	int state;
 	/* STATE :
 	dead :		0 
@@ -19,8 +22,6 @@ struct task_struct{
 	reading :	3
 	stopped :	4
 	*/
-	long ebp, esp, eip;
-	int es, cs, ss, ds, fs, gs;
 	subscreen * tty_user; // in which tty does I appear ?
 	subscreen * tty_info; // in which tty does my infos appear ?
 	int nb_ticks_sleep; //sleeping since how long ?
@@ -34,8 +35,9 @@ struct task_struct{
 
 //this is usefull only for initialization
 struct process{
-	long ebp, esp, eip;
+	long ebx, ecx, edi, esi, ebp, esp;
 	int es, cs, ss, ds, fs, gs;
+	long eip;
 };
 
 //SOME GLOBAL VARIABLES
@@ -53,6 +55,8 @@ int init_process();
 int init_task_table();
 //struct task_struct* init_struct_task(int tty_user, int tty_info);
 int init_struct_task(struct task_struct* tss,int tty_user, int tty_info, int* exists_entry, struct process p);
+
+void _switch_proc(struct task_struct* p, struct task_struct* n);
 
 void scheduler();
 

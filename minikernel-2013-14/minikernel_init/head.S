@@ -80,6 +80,8 @@ idt_descr:
 .globl minikernel_irq0
 minikernel_irq0:
 	cld
+	movb $0x20,%al
+	outb %al,$0x20
 	pushl %eax
 	pushl %ecx
 	pushl %edx
@@ -89,8 +91,6 @@ minikernel_irq0:
 	movl %eax,%ds
 	movl %eax,%es
 	call do_minikernel_irq0
-	movb $0x20,%al
-	outb %al,$0x20
 	popl %ds
 	popl %es
 	popl %edx

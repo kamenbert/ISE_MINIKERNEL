@@ -10,12 +10,17 @@ int init_struct_task(struct task_struct* tss,int tty_user, int tty_info, int* ex
 		kprintf(&(sc_tty_info[tty_info]),"ERROR NULL POINTER");
 		return -1;
 	}
-	
+
 	if(*exists_entry != 0) {
 		tss->state = RUNNING;
 	} else {
 		tss->state = DEAD;
 	}
+
+	tss->ebx = p.ebx; 
+	tss->ecx = p.ecx; 
+	tss->edi = p.edi; 
+	tss->esi = p.esi; 
 	tss->ebp = p.ebp; 
 	tss->esp = p.esp;
 	tss->eip = p.eip;
@@ -56,7 +61,11 @@ int init_task_table() {
 	//entrées des tss en dur : pas très beau mais bon... :(
 	struct process p[4];
 	//processus 0
-	p[0].ebp = 0; //je ne sais pas trop pour celui-là 
+	p[0].ebx = 0; //je ne sais pas trop pour celui-là 
+	p[0].ecx = 0;
+	p[0].edi = 0;
+	p[0].esi = 0;
+	p[0].ebp = 0;
 	p[0].eip = *table_entry[0];	
 	p[0].esp = 0x1FFF; 	
 	p[0].es = p[0].ds;
@@ -66,7 +75,11 @@ int init_task_table() {
 	p[0].fs = p[0].ds;	
 	p[0].gs = p[0].ds;
 	//processus 1
-	p[1].ebp = 0; //je ne sais pas trop pour celui-là 
+	p[1].ebx = 0; //je ne sais pas trop pour celui-là 
+	p[0].ecx = 0;
+	p[0].edi = 0;
+	p[0].esi = 0;
+	p[0].ebp = 0;
 	p[1].eip = *table_entry[1];	
 	p[1].esp = 0x1FFF; 	
 	p[1].es = p[1].ds;
@@ -76,7 +89,11 @@ int init_task_table() {
 	p[1].fs = p[1].ds;	
 	p[1].gs = p[1].ds;
 	//processus 2
-	p[2].ebp = 0; //je ne sais pas trop pour celui-là 
+	p[2].ebx = 0; //je ne sais pas trop pour celui-là 
+	p[0].ecx = 0;
+	p[0].edi = 0;
+	p[0].esi = 0;
+	p[0].ebp = 0;
 	p[2].eip = *table_entry[2];	
 	p[2].esp = 0x1FFF; 	
 	p[2].es = p[2].ds;
@@ -86,7 +103,11 @@ int init_task_table() {
 	p[2].fs = p[2].ds;	
 	p[2].gs = p[2].ds;
 	//processus 3
-	p[3].ebp = 0; //je ne sais pas trop pour celui-là 
+	p[3].ebx = 0; //je ne sais pas trop pour celui-là 
+	p[0].ecx = 0;
+	p[0].edi = 0;
+	p[0].esi = 0;
+	p[0].ebp = 0;
 	p[3].eip = *table_entry[3];	
 	p[3].esp = 0x1FFF; 	
 	p[3].es = p[3].ds;
@@ -134,6 +155,7 @@ void maj_info_process(struct task_struct* tss){
 void scheduler() {
 	int found_next = 0; 
 	int i;
+	struct task_struct* previous;
 	for(i = 0; i < 4; i++) {
 		switch(task_table[i]->state) {
 			case DEAD :
@@ -181,7 +203,9 @@ void scheduler() {
 			default :
 				break;
 		}
-		current = task_table[current_];
 	}
+	previous = current;
+	current = task_table[current_];
+	_switch_proc(previous, current);
 }
 

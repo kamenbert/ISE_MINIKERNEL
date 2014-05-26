@@ -24,6 +24,7 @@ gcc -m32 -Iinclude -traditional 	-c minikernel_init/syscall_handler.S 	-o tmp/sy
 gcc -m32 -Iinclude 			-c minikernel_init/syscall.c 		-o tmp/syscall.o
 gcc -m32 -Iinclude 			-c minikernel_init/sys_functions.c 	-o tmp/sys_functions.o
 gcc -m32 -Iinclude -fno-stack-protector -c minikernel_init/vga.c 		-o tmp/vga.o
+gcc -m32 -Iinclude 			-c minikernel_init/switch_proc.S 	-o tmp/switch_proc.o
 gcc -m32 -Iinclude 			-c minikernel_init/process.c 		-o tmp/process.o
 gcc -m32 -Iinclude 			-c minikernel_init/main.c 		-o tmp/main.o
 gcc -m32 -Iinclude 			-c minikernel_init/ttyS_asm.S 		-o tmp/ttyS_asm.o
@@ -44,6 +45,7 @@ ld  -m elf_i386 -Ttext 0x1000 -e startup_32 -o tmp/minikernel.elf \
 	tmp/syscall.o \
 	tmp/sys_functions.o \
 	tmp/vga.o \
+	tmp/switch_proc.o \
 	tmp/process.o \
 	tmp/main.o \
 	tmp/ttyS_asm.o \
