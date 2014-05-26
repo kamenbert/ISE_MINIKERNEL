@@ -88,7 +88,7 @@ then
 	entry_proc1=$(objdump -d tmp/user_proc/$1.elf | grep main | cut -f1 -d ' ')
 	exists_proc1=11111111
 	objcopy -O binary -R .note -R .comment -S tmp/user_proc/$1.elf tmp/user_proc/$1.bin
-	dd if=tmp/user_proc/$1.bin of=tmp/user_proc/$1.extended count=1 bs=8192 conv=sync
+	dd if=tmp/user_proc/$1.bin of=tmp/user_proc/$1.extended count=1 bs=16384 conv=sync
 fi
 if [ $2 ]
 then
@@ -99,7 +99,7 @@ then
 	entry_proc1=$(objdump -d tmp/user_proc/$2.elf | grep main | cut -f1 -d ' ')
 	exists_proc1=11111111
 	objcopy -O binary -R .note -R .comment -S tmp/user_proc/$2.elf tmp/user_proc/$2.bin
-	dd if=tmp/user_proc/$2.bin of=tmp/user_proc/$2.extended count=1 bs=8192 conv=sync
+	dd if=tmp/user_proc/$2.bin of=tmp/user_proc/$2.extended count=1 bs=16384 conv=sync
 fi
 if [ $3 ]
 then
@@ -110,7 +110,7 @@ then
 	entry_proc1=$(objdump -d tmp/user_proc/$3.elf | grep main | cut -f1 -d ' ')
 	exists_proc1=11111111
 	objcopy -O binary -R .note -R .comment -S tmp/user_proc/$3.elf tmp/user_proc/$3.bin
-	dd if=tmp/user_proc/$3.bin of=tmp/user_proc/$3.extended count=1 bs=8192 conv=sync
+	dd if=tmp/user_proc/$3.bin of=tmp/user_proc/$3.extended count=1 bs=16384 conv=sync
 fi
 if [ $4 ]
 then
@@ -121,7 +121,7 @@ then
 	entry_proc1=$(objdump -d tmp/user_proc/$4.elf | grep main | cut -f1 -d ' ')
 	exists_proc1=11111111
 	objcopy -O binary -R .note -R .comment -S tmp/user_proc/$4.elf tmp/user_proc/$4.bin
-	dd if=tmp/user_proc/$4.bin of=tmp/user_proc/$4.extended count=1 bs=8192 conv=sync
+	dd if=tmp/user_proc/$4.bin of=tmp/user_proc/$4.extended count=1 bs=16384 conv=sync
 fi
 
 
