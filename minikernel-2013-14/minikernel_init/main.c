@@ -38,6 +38,7 @@ int i;
 		pidt[0]= addr;
 		pidt[3]= (((long)addr)>>16)&0xffff;
 	}
+
 }
 
 void do_minikernel_irq0()
@@ -55,5 +56,6 @@ static int time=0;
 		count=0;
 		time++;
 	}
+	__asm__ __volatile__ ("cli\n\t");
 	scheduler();
 }

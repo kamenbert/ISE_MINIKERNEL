@@ -205,7 +205,7 @@ void kbd_doScancode(int scancode, int up)
 
 				if(kbd_state.echo && c)
 				{
-					kprintf(focus->tty_user, "%c", c);
+//					kprintf(focus->tty_user, "%c", c);
 				}
 				break;
 		}
