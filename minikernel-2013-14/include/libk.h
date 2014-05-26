@@ -1,6 +1,5 @@
-/* Fichier usr_functions.h*/
+/* interface library libk */
 
-extern int strlen(const char*);
 extern char read ();
 extern void write (char);
 extern void sleep (int);

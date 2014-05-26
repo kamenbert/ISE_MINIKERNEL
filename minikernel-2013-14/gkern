@@ -50,8 +50,8 @@ objcopy -O binary -R .note -R .comment -S tmp/minikernel.elf tmp/minikernel
 #objcopy -O binary -R .note -R .comment -S tmp/minikernel.elf tmp/minikernel.bin
 
 # Compilation de la library #
-gcc -m32 -Iinclude -c minikernel_user/libk.S -o tmp/libk.o
-gcc -m32 -Iinclude -c minikernel_user/usr_functions.c -o tmp/usr_functions.o
+gcc -m32 -Iinclude -nodefaultlibs -c minikernel_user/libk.S -o tmp/libk.o
+gcc -m32 -Iinclude -nodefaultlibs -c minikernel_user/usr_functions.c -o tmp/usr_functions.o
 ar r lib/libk.a tmp/libk.o tmp/usr_functions.o
 ranlib lib/libk.a
 
@@ -161,6 +161,6 @@ ranlib lib/libk.a
 #fi
 
 # generation de l'image bootable
-test -f tmp/build || cc boot/build.c -o tmp/build
+test -f tmp/build || cc -m32 boot/build.c -o tmp/build
 tmp/build tmp/bootsect tmp/setup tmp/minikernel > mykernel
 dd if=mykernel of=mykernel.vfd count=1 bs=1474560 conv=sync

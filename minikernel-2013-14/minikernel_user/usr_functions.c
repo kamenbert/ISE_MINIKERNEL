@@ -1,4 +1,8 @@
-void* memcpy(void* dest, const void* src, int n)
+#include "stdarg.h"
+
+typedef unsigned int size_t;
+
+void* memcpy(void* dest, const void* src, size_t n)
 {
 		int i;
 		char *d = (char *)dest, *s = (char *)src;
@@ -43,7 +47,7 @@ static void printf_str(const char* str, int len, char fillwith, int placeleft, i
 		}
 }
 
-#if 0
+
 void printf ( const char* fmt,...){
 		int 	len=0;
 		char 	fillwith=' ';
@@ -127,7 +131,7 @@ leave_printarg:
 }
 
 
-
+#if 0
 int scanf_usr( const char* fmt, char* addr){
 
 		char*	buf=addr;// = malloc(BUF_LEN*sizeof(char));
