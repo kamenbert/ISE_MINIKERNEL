@@ -36,7 +36,7 @@ struct task_struct{
 struct process{
 	long ebp, esp, eip;
 	int es, cs, ss, ds, fs, gs;
-}
+};
 
 //SOME GLOBAL VARIABLES
 struct task_struct* focus; // current focus
@@ -52,7 +52,7 @@ int current_;
 int init_process();
 int init_task_table();
 //struct task_struct* init_struct_task(int tty_user, int tty_info);
-int init_struct_task(struct task_struct* tss,int tty_user, int tty_info);
+int init_struct_task(struct task_struct* tss,int tty_user, int tty_info, int* exists_entry, struct process p);
 
 void scheduler();
 
