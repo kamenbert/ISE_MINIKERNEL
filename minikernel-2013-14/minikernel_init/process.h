@@ -19,7 +19,7 @@ struct task_struct{
 	reading :	3
 	stopped :	4
 	*/
-	long eax, ebx, ecx, edi, esi, ebp, esp, eip;
+	long ebp, esp, eip;
 	int es, cs, ss, ds, fs, gs;
 	subscreen * tty_user; // in which tty does I appear ?
 	subscreen * tty_info; // in which tty does my infos appear ?
@@ -31,6 +31,12 @@ struct task_struct{
 	char buffer[KBD_BUFFER_SIZE]; // buffer for reading
 	int buffer_filling; //filling of the buffer
 };
+
+//this is usefull only for initialization
+struct process{
+	long ebp, esp, eip;
+	int es, cs, ss, ds, fs, gs;
+}
 
 //SOME GLOBAL VARIABLES
 struct task_struct* focus; // current focus

@@ -3,10 +3,6 @@
 
 
 void go_inactive(struct task_struct* tss) {
-	long eax;
-	long ebx;
-	long ecx;
-	long edi;
 	long ebp;
 	long esp;
 	long eip;
@@ -18,38 +14,27 @@ void go_inactive(struct task_struct* tss) {
 	int gs;
 
 	__asm__ __volatile__ (
-		"movl %%eax, %0 ;"
-		"movl %%ebx, %1 ;"
-		"movl %%ecx, %2 ;"
-		"movl %%edi, %3 ;"
-		"movl %%ebp, %4 ;"
-		"movl %%esp, %5 ;"
-		"movl %%eip, %6 ;"
-		"mov %%es, %7;"
-		"mov %%cs, %8;"
-		"mov %%ss, %9;"
-		"mov %%ds, %10;"
-		"mov %%fs, %11;"
-		"mov %%gs, %12;"
-		: 	"=r" (eax),
-		 	"=r" (ebx),
-		 	"=r" (ecx),
-		 	"=r" (edi),
-		 	"=r" (ebp),
-		 	"=r" (esp),
-		 	"=r" (eip),
-			"=r" (es),
-			"=r" (cs),
-			"=r" (ss),
-			"=r" (ds),
-			"=r" (fs),
-			"=r" (gs)
+		"movl %%ebp, %0 ;"
+		"movl %%esp, %1 ;"
+		"movl %%eip, %2 ;"
+		"mov %%es, %3;"
+		"mov %%cs, %4;"
+		"mov %%ss, %5;"
+		"mov %%ds, %6;"
+		"mov %%fs, %7;"
+		"mov %%gs, %8;"
+		: 
+		 	"=m" (ebp),
+		 	"=m" (esp),
+		 	"=m" (eip),
+			"=m" (es),
+			"=m" (cs),
+			"=m" (ss),
+			"=m" (ds),
+			"=m" (fs),
+			"=m" (gs)
 	);
 
-	eax = tss->eax;
-	ebx = tss->ebx;
-	ecx = tss->ecx;
-	edi = tss->edi;
 	ebp = tss->ebp;
 	esp = tss->esp;
 	eip = tss->eip;
@@ -63,10 +48,6 @@ void go_inactive(struct task_struct* tss) {
 }
 
 void go_active(struct task_struct* tss) {
-	long eax = tss->eax;
-	long ebx = tss->ebx;
-	long ecx = tss->ecx;
-	long edi = tss->edi;
 	long ebp = tss->ebp;
 	long esp = tss->esp;
 	long eip = tss->eip;
@@ -78,32 +59,25 @@ void go_active(struct task_struct* tss) {
 	int gs = tss->gs;
 
 	__asm__ __volatile__ (
-		"movl %0, %%eax;"
-		"movl %1, %%ebx;"
-		"movl %2, %%ecx;"
-		"movl %3, %%edi;"
-		"movl %4, %%ebp;"
-		"movl %5, %%esp;"
-		"movl %6, %%eip;"
-		"mov %7, %%es;"
-		"mov %8, %%cs;"
-		"mov %9, %%ss;"
-		"mov %10, %%ds;"
-		"mov %11, %%fs;"
-		"mov %12, %%gs;"
-		:: 	"r" (eax),
-		 	"r" (ebx),
-		 	"r" (ecx),
-		 	"r" (edi),
-		 	"r" (ebp),
-		 	"r" (esp),
-		 	"r" (eip),
-			"r" (es),
-			"r" (cs),
-			"r" (ss),
-			"r" (ds),
-			"r" (fs),
-			"r" (gs)
+		"movl %0, %%ebp;"
+		"movl %1, %%esp;" 
+		"movl %2, %%eip;"
+		"mov %3, %%es;"
+		"mov %4, %%cs;"
+		"mov %5, %%ss;"
+		"mov %6, %%ds;"
+		"mov %7, %%fs;"
+		"mov %8, %%gs;"
+		::
+		 	"m" (ebp),
+		 	"m" (esp),
+		 	"m" (eip),
+			"m" (es),
+			"m" (cs),
+			"m" (ss),
+			"m" (ds),
+			"m" (fs),
+			"m" (gs)
 	);
 			
 }
