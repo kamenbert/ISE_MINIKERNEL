@@ -2,6 +2,10 @@
 
 #supression des anciens fichiers temporaires
 rm -rf tmp/*
+
+#creation of the user_proc directory
+mkdir tmp/user_proc
+
 # generation du boot
 cc -m32 -traditional -E -Iinclude boot/bootsect.S > tmp/bootsect.s 
 as86 -0 -a -o tmp/bootsect.o tmp/bootsect.s
@@ -80,10 +84,10 @@ then
 	#gcc -m32 -fno-stack-protector -Iuser_includes -c $1 -o tmp/user_proc/$1.o
 	#ld tmp/user_proc/{$1.o,libc.a} -m elf_i386 -Ttext 0 -Tdata 0x2000 -e main -o tmp/user_proc/$1.elf
 
- 	gcc -m32 -nostdlib -Llib -Iinclude -O $1.c -o $1.elf -Xlinker -e -Xlinker main -lk
+ 	gcc -m32 -nostdlib -Llib -Iinclude -O $1.c -o tmp/user_proc/$1.elf -Xlinker -e -Xlinker main -lk
 	entry_proc1=$(objdump -d tmp/user_proc/$1.elf | grep main | cut -f1 -d ' ')
 	exists_proc1=11111111
-	objcopy -O binary -R .note -R .comment -S user_proc/$1.elf tmp/user_proc/$1.bin
+	objcopy -O binary -R .note -R .comment -S tmp/user_proc/$1.elf tmp/user_proc/$1.bin
 	dd if=tmp/user_proc/$1.bin of=tmp/user_proc/$1.extended count=1 bs=8192 conv=sync
 fi
 if [ $2 ]
@@ -91,10 +95,10 @@ then
 	#gcc -m32 -fno-stack-protector -Iuser_includes -c $2 -o tmp/user_proc/$2.o
 	#ld tmp/user_proc/{$2.o,libc.a} -m elf_i386 -Ttext 0 -Tdata 0x2000 -e main -o tmp/user_proc/$2.elf
 
- 	gcc -m32 -nostdlib -Llib -Iinclude -O $1.c -o $1.elf -Xlinker -e -Xlinker main -lk
+ 	gcc -m32 -nostdlib -Llib -Iinclude -O $2.c -o tmp/user_proc/$2.elf -Xlinker -e -Xlinker main -lk
 	entry_proc1=$(objdump -d tmp/user_proc/$2.elf | grep main | cut -f1 -d ' ')
 	exists_proc1=11111111
-	objcopy -O binary -R .note -R .comment -S user_proc/$2.elf tmp/user_proc/$2.bin
+	objcopy -O binary -R .note -R .comment -S tmp/user_proc/$2.elf tmp/user_proc/$2.bin
 	dd if=tmp/user_proc/$2.bin of=tmp/user_proc/$2.extended count=1 bs=8192 conv=sync
 fi
 if [ $3 ]
@@ -102,10 +106,10 @@ then
 	#gcc -m32 -fno-stack-protector -Iuser_includes -c $3 -o tmp/user_proc/$3.o
 	#ld tmp/user_proc/{$3.o,libc.a} -m elf_i386 -Ttext 0 -Tdata 0x2000 -e main -o tmp/user_proc/$3.elf
 
- 	gcc -m32 -nostdlib -Llib -Iinclude -O $1.c -o $1.elf -Xlinker -e -Xlinker main -lk
+ 	gcc -m32 -nostdlib -Llib -Iinclude -O $3.c -o tmp/user_proc/$3.elf -Xlinker -e -Xlinker main -lk
 	entry_proc1=$(objdump -d tmp/user_proc/$3.elf | grep main | cut -f1 -d ' ')
 	exists_proc1=11111111
-	objcopy -O binary -R .note -R .comment -S user_proc/$3.elf tmp/user_proc/$3.bin
+	objcopy -O binary -R .note -R .comment -S tmp/user_proc/$3.elf tmp/user_proc/$3.bin
 	dd if=tmp/user_proc/$3.bin of=tmp/user_proc/$3.extended count=1 bs=8192 conv=sync
 fi
 if [ $4 ]
@@ -113,10 +117,10 @@ then
 	#gcc -m32 -fno-stack-protector -Iuser_includes -c $4 -o tmp/user_proc/$4.o
 	#ld tmp/user_proc/{$4.o,libc.a} -m elf_i386 -Ttext 0 -Tdata 0x2000 -e main -o tmp/user_proc/$4.elf
 
- 	gcc -m32 -nostdlib -Llib -Iinclude -O $1.c -o $1.elf -Xlinker -e -Xlinker main -lk
+ 	gcc -m32 -nostdlib -Llib -Iinclude -O $4.c -o tmp/user_proc/$4.elf -Xlinker -e -Xlinker main -lk
 	entry_proc1=$(objdump -d tmp/user_proc/$4.elf | grep main | cut -f1 -d ' ')
 	exists_proc1=11111111
-	objcopy -O binary -R .note -R .comment -S user_proc/$4.elf tmp/user_proc/$4.bin
+	objcopy -O binary -R .note -R .comment -S tmp/user_proc/$4.elf tmp/user_proc/$4.bin
 	dd if=tmp/user_proc/$4.bin of=tmp/user_proc/$4.extended count=1 bs=8192 conv=sync
 fi
 
@@ -154,15 +158,15 @@ then
 fi
 if [ $2 ] && [ -z $3 ]
 then
-	cat tmp/minikernel.extended tmp/table.extended tmp/user_proc/$1.extended tmp/user_proc/$name2.extended > tmp/minikernel
+	cat tmp/minikernel.extended tmp/table.extended tmp/user_proc/$1.extended tmp/user_proc/$2.extended > tmp/minikernel
 fi
 if [ $3 ] && [ -z $4 ]
 then
-	cat tmp/minikernel.extended tmp/table.extended tmp/user_proc/$1.extended tmp/user_proc/$name2.extended tmp/user_proc/$name3.extended > tmp/minikernel
+	cat tmp/minikernel.extended tmp/table.extended tmp/user_proc/$1.extended tmp/user_proc/$2.extended tmp/user_proc/$3.extended > tmp/minikernel
 fi
 if [ $4 ]
 then
-	cat tmp/minikernel.extended tmp/table.extended tmp/user_proc/$1.extended tmp/user_proc/$name2.extended tmp/user_proc/$name3.extended tmp/user_proc/$name4.extended > tmp/minikernel
+	cat tmp/minikernel.extended tmp/table.extended tmp/user_proc/$1.extended tmp/user_proc/$2.extended tmp/user_proc/$3.extended tmp/user_proc/$4.extended > tmp/minikernel
 fi
 
 # generation de l'image bootable
