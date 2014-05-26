@@ -50,10 +50,10 @@ objcopy -O binary -R .note -R .comment -S tmp/minikernel.elf tmp/minikernel
 #objcopy -O binary -R .note -R .comment -S tmp/minikernel.elf tmp/minikernel.bin
 
 # Compilation de la library #
-#gcc -m32 -c minikernel_user/libk.S -o tmp/libk.o
-#gcc -m32 -c minikernel_user/usr_functions.c -o tmp/usr_function.o
-#ar r lib/libk.a tmp/libk.o tmp/usr_functions.o
-#ranlib lib/libk.a
+gcc -m32 -Iinclude -c minikernel_user/libk.S -o tmp/libk.o
+gcc -m32 -Iinclude -c minikernel_user/usr_functions.c -o tmp/usr_functions.o
+ar r lib/libk.a tmp/libk.o tmp/usr_functions.o
+ranlib lib/libk.a
 
 ### exemple pour compiler un programme avec libk ###
 # gcc -m32 -nostdlib -Llib -Iinclude -O test.c -o test.exe -Xlinker -e -Xlinker main -lk
