@@ -46,8 +46,8 @@ ld  -m elf_i386 -Ttext 0x1000 -e startup_32 -o tmp/minikernel.elf \
 	tmp/ttyS.o \
 	tmp/entry.o \
 	tmp/ttyS_util.o
-objcopy -O binary -R .note -R .comment -S tmp/minikernel.elf tmp/minikernel
-#objcopy -O binary -R .note -R .comment -S tmp/minikernel.elf tmp/minikernel.bin
+#objcopy -O binary -R .note -R .comment -S tmp/minikernel.elf tmp/minikernel
+objcopy -O binary -R .note -R .comment -S tmp/minikernel.elf tmp/minikernel.bin
 
 # Compilation de la library #
 gcc -m32 -Iinclude -nodefaultlibs -c minikernel_user/libk.S -o tmp/libk.o
@@ -56,109 +56,114 @@ ar r lib/libk.a tmp/libk.o tmp/usr_functions.o
 ranlib lib/libk.a
 
 ### exemple pour compiler un programme avec libk ###
-# gcc -m32 -nostdlib -Llib -Iinclude -O test.c -o test.exe -Xlinker -e -Xlinker main -lk
+ #gcc -m32 -nostdlib -Llib -Iinclude -O test.c -o test.exe -Xlinker -e -Xlinker main -lk
 
 
-# extension du kernel à 40Ko
-#dd if=tmp/minikernel.bin of=tmp/minikernel.extended count=1 bs=40960 conv=sync
-
-#
-##### compilation des programmes user ###
-#
-#entry_proc1=00000000 
-#entry_proc2=00000000 
-#entry_proc3=00000000 
-#entry_proc4=00000000 
-#exists_proc1=00000000
-#exists_proc2=00000000
-#exists_proc3=00000000
-#exists_proc4=00000000
-#
-#if [ $1 ]
-#then
-#	gcc -m32 -fno-stack-protector -Iuser_includes -c $1 -o tmp/user_proc/$1.o
-#	# libc.a comme dans "assembleur"?
-#	ld tmp/user_proc/{$1.o,libc.a} -m elf_i386 -Ttext 0 -Tdata 0x2000 -e main -o tmp/user_proc/$1.elf
-#	entry_proc1=$(objdump -d user_tmp/$1.elf | grep main | cut -f1 -d ' ')
-#	exists_proc1=11111111
-#	objcopy -O binary -R .note -R .comment -S user_proc/$1.elf tmp/user_proc/$1.bin
-#	dd if=tmp/user_proc/$1.bin of=tmp/user_proc/$1.extended count=1 bs=8192 conv=sync
-#fi
-#if [ $2 ]
-#then
-#	gcc -m32 -fno-stack-protector -Iuser_includes -c $2 -o tmp/user_proc/$2.o
-#	# libc.a comme dans "assembleur"?
-#	ld tmp/user_proc/{$2.o,libc.a} -m elf_i386 -Ttext 0 -Tdata 0x2000 -e main -o tmp/user_proc/$2.elf
-#	entry_proc1=$(objdump -d user_tmp/$2.elf | grep main | cut -f1 -d ' ')
-#	exists_proc1=11111111
-#	objcopy -O binary -R .note -R .comment -S user_proc/$2.elf tmp/user_proc/$2.bin
-#	dd if=tmp/user_proc/$2.bin of=tmp/user_proc/$2.extended count=1 bs=8192 conv=sync
-#fi
-#if [ $3 ]
-#then
-#	gcc -m32 -fno-stack-protector -Iuser_includes -c $3 -o tmp/user_proc/$3.o
-#	# libc.a comme dans "assembleur"?
-#	ld tmp/user_proc/{$3.o,libc.a} -m elf_i386 -Ttext 0 -Tdata 0x2000 -e main -o tmp/user_proc/$3.elf
-#	entry_proc1=$(objdump -d user_tmp/$3.elf | grep main | cut -f1 -d ' ')
-#	exists_proc1=11111111
-#	objcopy -O binary -R .note -R .comment -S user_proc/$3.elf tmp/user_proc/$3.bin
-#	dd if=tmp/user_proc/$3.bin of=tmp/user_proc/$3.extended count=1 bs=8192 conv=sync
-#fi
-#if [ $4 ]
-#then
-#	gcc -m32 -fno-stack-protector -Iuser_includes -c $4 -o tmp/user_proc/$4.o
-#	# libc.a comme dans "assembleur"?
-#	ld tmp/user_proc/{$4.o,libc.a} -m elf_i386 -Ttext 0 -Tdata 0x2000 -e main -o tmp/user_proc/$4.elf
-#	entry_proc1=$(objdump -d user_tmp/$4.elf | grep main | cut -f1 -d ' ')
-#	exists_proc1=11111111
-#	objcopy -O binary -R .note -R .comment -S user_proc/$4.elf tmp/user_proc/$4.bin
-#	dd if=tmp/user_proc/$4.bin of=tmp/user_proc/$4.extended count=1 bs=8192 conv=sync
-#fi
+## extension du kernel à 40Ko
+dd if=tmp/minikernel.bin of=tmp/minikernel.extended count=1 bs=40960 conv=sync
 
 
-# Cette table me paraît tellement fucking legit que je la pique à Pral.
-#echo -e "\x$(echo $entry_proc1 | cut -c7-8)\x$(echo $entry_proc1 \
-#	| cut -c5-6)\x$(echo $entry_proc1 | cut -c3-4)\x$(echo $entry_proc1 \
-#	| cut -c1-2)\x$(echo $exists_proc1 | cut -c7-8)\x$(echo $exists_proc1 \
-#	| cut -c5-6)\x$(echo $exists_proc1 | cut -c3-4)\x$(echo $exists_proc1 \
-#	| cut -c1-2)\x$(echo $entry_proc2 | cut -c7-8)\x$(echo $entry_proc2 \
-#	| cut -c5-6)\x$(echo $entry_proc2 | cut -c3-4)\x$(echo $entry_proc2 \
-#	| cut -c1-2)\x$(echo $exists_proc2 | cut -c7-8)\x$(echo $exists_proc2 \
-#	| cut -c5-6)\x$(echo $exists_proc2 | cut -c3-4)\x$(echo $exists_proc2 \
-#	| cut -c1-2)\x$(echo $entry_proc3 | cut -c7-8)\x$(echo $entry_proc3 \
-#	| cut -c5-6)\x$(echo $entry_proc3 | cut -c3-4)\x$(echo $entry_proc3 \
-#	| cut -c1-2)\x$(echo $exists_proc3 | cut -c7-8)\x$(echo $exists_proc3 \
-#	| cut -c5-6)\x$(echo $exists_proc3 | cut -c3-4)\x$(echo $exists_proc3 \
-#	| cut -c1-2)\x$(echo $entry_proc4 | cut -c7-8)\x$(echo $entry_proc4 \
-#	| cut -c5-6)\x$(echo $entry_proc4 | cut -c3-4)\x$(echo $entry_proc4 \
-#	| cut -c1-2)\x$(echo $exists_proc4 | cut -c7-8)\x$(echo $exists_proc4 \
-#	| cut -c5-6)\x$(echo $exists_proc4 | cut -c3-4)\x$(echo $exists_proc4 \
-#	| cut -c1-2)" > tmp/table
+#### compilation des programmes user ###
+
+entry_proc1=00000000 
+entry_proc2=00000000 
+entry_proc3=00000000 
+entry_proc4=00000000 
+exists_proc1=00000000
+exists_proc2=00000000
+exists_proc3=00000000
+exists_proc4=00000000
+
+if [ $1 ]
+then
+	## on ne fait pas comme ça finalement
+	#gcc -m32 -fno-stack-protector -Iuser_includes -c $1 -o tmp/user_proc/$1.o
+	#ld tmp/user_proc/{$1.o,libc.a} -m elf_i386 -Ttext 0 -Tdata 0x2000 -e main -o tmp/user_proc/$1.elf
+
+ 	gcc -m32 -nostdlib -Llib -Iinclude -O $1.c -o $1.elf -Xlinker -e -Xlinker main -lk
+	entry_proc1=$(objdump -d user_tmp/$1.elf | grep main | cut -f1 -d ' ')
+	exists_proc1=11111111
+	objcopy -O binary -R .note -R .comment -S user_proc/$1.elf tmp/user_proc/$1.bin
+	dd if=tmp/user_proc/$1.bin of=tmp/user_proc/$1.extended count=1 bs=8192 conv=sync
+fi
+if [ $2 ]
+then
+	#gcc -m32 -fno-stack-protector -Iuser_includes -c $2 -o tmp/user_proc/$2.o
+	#ld tmp/user_proc/{$2.o,libc.a} -m elf_i386 -Ttext 0 -Tdata 0x2000 -e main -o tmp/user_proc/$2.elf
+
+ 	gcc -m32 -nostdlib -Llib -Iinclude -O $1.c -o $1.elf -Xlinker -e -Xlinker main -lk
+	entry_proc1=$(objdump -d user_tmp/$2.elf | grep main | cut -f1 -d ' ')
+	exists_proc1=11111111
+	objcopy -O binary -R .note -R .comment -S user_proc/$2.elf tmp/user_proc/$2.bin
+	dd if=tmp/user_proc/$2.bin of=tmp/user_proc/$2.extended count=1 bs=8192 conv=sync
+fi
+if [ $3 ]
+then
+	#gcc -m32 -fno-stack-protector -Iuser_includes -c $3 -o tmp/user_proc/$3.o
+	#ld tmp/user_proc/{$3.o,libc.a} -m elf_i386 -Ttext 0 -Tdata 0x2000 -e main -o tmp/user_proc/$3.elf
+
+ 	gcc -m32 -nostdlib -Llib -Iinclude -O $1.c -o $1.elf -Xlinker -e -Xlinker main -lk
+	entry_proc1=$(objdump -d user_tmp/$3.elf | grep main | cut -f1 -d ' ')
+	exists_proc1=11111111
+	objcopy -O binary -R .note -R .comment -S user_proc/$3.elf tmp/user_proc/$3.bin
+	dd if=tmp/user_proc/$3.bin of=tmp/user_proc/$3.extended count=1 bs=8192 conv=sync
+fi
+if [ $4 ]
+then
+	#gcc -m32 -fno-stack-protector -Iuser_includes -c $4 -o tmp/user_proc/$4.o
+	#ld tmp/user_proc/{$4.o,libc.a} -m elf_i386 -Ttext 0 -Tdata 0x2000 -e main -o tmp/user_proc/$4.elf
+
+ 	gcc -m32 -nostdlib -Llib -Iinclude -O $1.c -o $1.elf -Xlinker -e -Xlinker main -lk
+	entry_proc1=$(objdump -d user_tmp/$4.elf | grep main | cut -f1 -d ' ')
+	exists_proc1=11111111
+	objcopy -O binary -R .note -R .comment -S user_proc/$4.elf tmp/user_proc/$4.bin
+	dd if=tmp/user_proc/$4.bin of=tmp/user_proc/$4.extended count=1 bs=8192 conv=sync
+fi
 
 
-#dd if=tmp/table of=tmp/table.extended count=1 bs=4096 conv=sync
-#
-## ajout de la table + processus après le kernel
-#if [ -z $1 ]
-#then
-#	cat tmp/minikernel.extended tmp/table.extended > tmp/minikernel
-#fi
-#if [ $1 ] && [ -z $2 ]
-#then
-#	cat tmp/minikernel.extended tmp/table.extended tmp/user_proc/$1.extended > tmp/minikernel
-#fi
-#if [ $2 ] && [ -z $3 ]
-#then
-#	cat tmp/minikernel.extended tmp/table.extended tmp/user_proc/$1.extended tmp/user_proc/$name2.extended > tmp/minikernel
-#fi
-#if [ $3 ] && [ -z $4 ]
-#then
-#	cat tmp/minikernel.extended tmp/table.extended tmp/user_proc/$1.extended tmp/user_proc/$name2.extended tmp/user_proc/$name3.extended > tmp/minikernel
-#fi
-#if [ $4 ]
-#then
-#	cat tmp/minikernel.extended tmp/table.extended tmp/user_proc/$1.extended tmp/user_proc/$name2.extended tmp/user_proc/$name3.extended tmp/user_proc/$name4.extended > tmp/minikernel
-#fi
+## Cette table me paraît tellement fucking legit que je la pique à Pral.
+echo -e "\x$(echo $entry_proc1 | cut -c7-8)\x$(echo $entry_proc1 \
+	| cut -c5-6)\x$(echo $entry_proc1 | cut -c3-4)\x$(echo $entry_proc1 \
+	| cut -c1-2)\x$(echo $exists_proc1 | cut -c7-8)\x$(echo $exists_proc1 \
+	| cut -c5-6)\x$(echo $exists_proc1 | cut -c3-4)\x$(echo $exists_proc1 \
+	| cut -c1-2)\x$(echo $entry_proc2 | cut -c7-8)\x$(echo $entry_proc2 \
+	| cut -c5-6)\x$(echo $entry_proc2 | cut -c3-4)\x$(echo $entry_proc2 \
+	| cut -c1-2)\x$(echo $exists_proc2 | cut -c7-8)\x$(echo $exists_proc2 \
+	| cut -c5-6)\x$(echo $exists_proc2 | cut -c3-4)\x$(echo $exists_proc2 \
+	| cut -c1-2)\x$(echo $entry_proc3 | cut -c7-8)\x$(echo $entry_proc3 \
+	| cut -c5-6)\x$(echo $entry_proc3 | cut -c3-4)\x$(echo $entry_proc3 \
+	| cut -c1-2)\x$(echo $exists_proc3 | cut -c7-8)\x$(echo $exists_proc3 \
+	| cut -c5-6)\x$(echo $exists_proc3 | cut -c3-4)\x$(echo $exists_proc3 \
+	| cut -c1-2)\x$(echo $entry_proc4 | cut -c7-8)\x$(echo $entry_proc4 \
+	| cut -c5-6)\x$(echo $entry_proc4 | cut -c3-4)\x$(echo $entry_proc4 \
+	| cut -c1-2)\x$(echo $exists_proc4 | cut -c7-8)\x$(echo $exists_proc4 \
+	| cut -c5-6)\x$(echo $exists_proc4 | cut -c3-4)\x$(echo $exists_proc4 \
+	| cut -c1-2)" > tmp/table
+
+
+dd if=tmp/table of=tmp/table.extended count=1 bs=4096 conv=sync
+
+# ajout de la table + processus après le kernel
+if [ -z $1 ]
+then
+	cat tmp/minikernel.extended tmp/table.extended > tmp/minikernel
+fi
+if [ $1 ] && [ -z $2 ]
+then
+	cat tmp/minikernel.extended tmp/table.extended tmp/user_proc/$1.extended > tmp/minikernel
+fi
+if [ $2 ] && [ -z $3 ]
+then
+	cat tmp/minikernel.extended tmp/table.extended tmp/user_proc/$1.extended tmp/user_proc/$name2.extended > tmp/minikernel
+fi
+if [ $3 ] && [ -z $4 ]
+then
+	cat tmp/minikernel.extended tmp/table.extended tmp/user_proc/$1.extended tmp/user_proc/$name2.extended tmp/user_proc/$name3.extended > tmp/minikernel
+fi
+if [ $4 ]
+then
+	cat tmp/minikernel.extended tmp/table.extended tmp/user_proc/$1.extended tmp/user_proc/$name2.extended tmp/user_proc/$name3.extended tmp/user_proc/$name4.extended > tmp/minikernel
+fi
 
 # generation de l'image bootable
 test -f tmp/build || cc -m32 boot/build.c -o tmp/build
