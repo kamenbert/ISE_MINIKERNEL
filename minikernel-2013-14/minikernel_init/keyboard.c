@@ -78,10 +78,10 @@ void kbd_changeFocus(int next)
 	
 	if(next == -1) {
 		next = (focus_+1) %4;
-		focus_ = next;
 	}
+
+	focus_ = next;
 	focus = task_table[next];
-	
 	int green = 2;
 	printborder(focus->tty_info,green);
 	printborder(focus->tty_user,green);
@@ -217,7 +217,6 @@ void kbd_doScancode(int scancode, int up)
  **/
 void kbd_output(int scancode)
 {
-
 	int state = scancode & KEY_UP;
 	kbd_doScancode(scancode, state);
 }
