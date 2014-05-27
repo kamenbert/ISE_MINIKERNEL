@@ -52,9 +52,9 @@ startup_32:
 	call vga_init
 	call ttyS_init
 	call init_process
-	call main_init
 	call kbd_init
 	call syscall_init
+	call main_init
 	movb $0xFF,%al
 	outb %al,$0xa1		/* enable IRQ: -8,-9,-10,-11,-12,-13,-14,-15 */
 	movb $0xF8,%al

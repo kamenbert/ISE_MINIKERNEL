@@ -19,8 +19,8 @@ _switch_proc :
 
 	movl $reprise,52(%eax)
 	
-	movl 8(%esp),%eax //on pointe vers la structure du next
-	movl (%eax),%esp // à partir de là, on restaure
+	movl 8(%esp),%eax
+	movl (%eax),%esp
 	movl 4(%eax),%ebx
 	movl 8(%eax),%ecx
 	movl 12(%eax),%edi
@@ -35,8 +35,9 @@ _switch_proc :
 	mov  48(%eax),%gs
 	
 	movl 52(%eax),%eax 	
+	sti
 	jmp *(%eax)
-
+	iret 
 reprise:
 	ret
 

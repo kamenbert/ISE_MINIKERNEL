@@ -60,7 +60,6 @@ void _switch_proc(struct task_struct* p, struct task_struct* n);
 
 void scheduler();
 
-// TODO
-// - la vraie tss de la gdt
+int firstSchedule;
 
 #endif

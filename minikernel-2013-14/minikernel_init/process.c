@@ -56,7 +56,7 @@ int init_task_table() {
 	exists_entry[1] = (int*) 0xB00c;
 	exists_entry[2] = (int*) 0xB014;
 	exists_entry[3] = (int*) 0xB01c;
-
+	
 
 	//entrées des tss en dur : pas très beau mais bon... :(
 	struct process p[4];
@@ -76,10 +76,10 @@ int init_task_table() {
 	p[0].gs = p[0].ds;
 	//processus 1
 	p[1].ebx = 0; //je ne sais pas trop pour celui-là 
-	p[0].ecx = 0;
-	p[0].edi = 0;
-	p[0].esi = 0;
-	p[0].ebp = 0;
+	p[1].ecx = 0;
+	p[1].edi = 0;
+	p[1].esi = 0;
+	p[1].ebp = 0;
 	p[1].eip = *table_entry[1];	
 	p[1].esp = 0x1FFF; 	
 	p[1].es = p[1].ds;
@@ -90,10 +90,10 @@ int init_task_table() {
 	p[1].gs = p[1].ds;
 	//processus 2
 	p[2].ebx = 0; //je ne sais pas trop pour celui-là 
-	p[0].ecx = 0;
-	p[0].edi = 0;
-	p[0].esi = 0;
-	p[0].ebp = 0;
+	p[2].ecx = 0;
+	p[2].edi = 0;
+	p[2].esi = 0;
+	p[2].ebp = 0;
 	p[2].eip = *table_entry[2];	
 	p[2].esp = 0x1FFF; 	
 	p[2].es = p[2].ds;
@@ -104,10 +104,10 @@ int init_task_table() {
 	p[2].gs = p[2].ds;
 	//processus 3
 	p[3].ebx = 0; //je ne sais pas trop pour celui-là 
-	p[0].ecx = 0;
-	p[0].edi = 0;
-	p[0].esi = 0;
-	p[0].ebp = 0;
+	p[3].ecx = 0;
+	p[3].edi = 0;
+	p[3].esi = 0;
+	p[3].ebp = 0;
 	p[3].eip = *table_entry[3];	
 	p[3].esp = 0x1FFF; 	
 	p[3].es = p[3].ds;
@@ -127,6 +127,9 @@ int init_task_table() {
 		}
 		//kprintf(task_table[i]->tty_info,"\n%d - created",i+1); //ne sert plus a rien
 	}
+	kprintf(task_table[3]->tty_user,"Initialisation de la table_task...\n");
+	kprintf(task_table[3]->tty_user,"debut:%x\n",*(table_entry[0]));
+
 	return 0;
 }
 
@@ -142,6 +145,7 @@ int init_process() {
 	current = task_table[0]; // current active process
 	focus_ = 0;
 	current_ = 0;
+	firstSchedule = 1;
 	return 0;
 }
 
@@ -156,6 +160,7 @@ void scheduler() {
 	int found_next = 0; 
 	int i;
 	struct task_struct* previous;
+	kprintf(task_table[3]->tty_user,"Dans le scheduler %x\n",task_table[0]->eip);
 	for(i = 0; i < 4; i++) {
 		switch(task_table[i]->state) {
 			case DEAD :
@@ -206,6 +211,9 @@ void scheduler() {
 	}
 	previous = current;
 	current = task_table[current_];
+	
+	kprintf(task_table[3]->tty_user,"\nCommutation...");
 	_switch_proc(previous, current);
+	kprintf(task_table[3]->tty_user,"\nReprise du processus, sortie du scheduler");
 }
 
