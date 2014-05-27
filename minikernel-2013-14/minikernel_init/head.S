@@ -52,9 +52,9 @@ startup_32:
 	call vga_init
 	call ttyS_init
 	call init_process
-	call main_init
 	call kbd_init
 	call syscall_init
+	call main_init
 	movb $0xFF,%al
 	outb %al,$0xa1		/* enable IRQ: -8,-9,-10,-11,-12,-13,-14,-15 */
 	movb $0xF8,%al
@@ -80,6 +80,8 @@ idt_descr:
 .globl minikernel_irq0
 minikernel_irq0:
 	cld
+	movb $0x20,%al
+	outb %al,$0x20
 	pushl %eax
 	pushl %ecx
 	pushl %edx
@@ -89,8 +91,6 @@ minikernel_irq0:
 	movl %eax,%ds
 	movl %eax,%es
 	call do_minikernel_irq0
-	movb $0x20,%al
-	outb %al,$0x20
 	popl %ds
 	popl %es
 	popl %edx
